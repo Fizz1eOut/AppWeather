@@ -38,12 +38,18 @@ body {
   height: 100%;
 }
 body {
-
+  background-color: slategrey;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--color-black);
+  font-family: "Nunito", sans-serif;
 }
 
 /* var-color */
 :root {
-  
+  --color-white: #FFFFFF;
+  --color-black: #282828;
+  --color-transparent-white: rgba(255, 255, 255, 0.15);
 }
 
 /* @media (max-width: 991px) {
