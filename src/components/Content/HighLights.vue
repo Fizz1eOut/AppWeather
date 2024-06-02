@@ -214,11 +214,15 @@ export default defineComponent({
   .error {
     font-size: 18px;
   }
+  .high-lights {
+    width: 100%;
+  }
   .high-lights__body {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
+    margin-top: 20px;
   }
   .high-lights__item {
     max-width: 260px;
@@ -241,5 +245,33 @@ export default defineComponent({
     font-size: 14px;
     color: var(--color-black);
   }
-
+  @media (max-width: 869px) {
+    .high-lights__body {
+      flex-wrap: wrap;
+      row-gap: 20px;
+      column-gap: 20px;
+      justify-content: center;
+    }
+    .high-lights__item {
+      max-width: 300px;
+    }
+  }
+  @media (max-width: 869px) {
+    .high-lights__item {
+      max-width: 260px;
+    }
+  }
+  @media (max-width: 620px) {
+    .high-lights__item {
+      max-width: 100%;
+    }
+    .high-lights__wrapper {
+      max-width: 300px;
+    }
+  }
+  @media (max-width: 440px) {
+    .high-lights__row {
+      align-items: flex-start;
+    }
+  }
 </style>

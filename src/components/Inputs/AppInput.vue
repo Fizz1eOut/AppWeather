@@ -66,4 +66,9 @@ export default defineComponent({
   :-ms-input-placeholder {
     color: var(--color-black);
   }
+  @media (max-width: 360px) {
+    .input {
+      padding: 8px 12px;
+    }
+  } 
 </style>

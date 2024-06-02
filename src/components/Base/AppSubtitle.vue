@@ -21,11 +21,4 @@ export default defineComponent({
     line-height: 120%;
     color: var(--color-black);
   }  
-@media (max-width: 499.98px) {
-  .subtitle {
-    font-weight: 400;
-    font-size: 16px;
-    color: var(--color-black);
-  }  
-}
 </style>

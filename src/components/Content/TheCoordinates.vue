@@ -61,11 +61,13 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .coordinates {
+    width: 100%;
+  }
   .coordinates__body {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
   }
   .compass {
     width: 120px;
@@ -77,5 +79,10 @@ export default defineComponent({
   .coordinates__text {
     font-weight: 400;
     font-size: 18px;
+  }
+  @media (max-width: 440px) {
+    .coordinates__body {
+      flex-direction: column;
+    }
   }
 </style>

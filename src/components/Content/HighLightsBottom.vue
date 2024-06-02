@@ -64,4 +64,21 @@ export default defineComponent({
     justify-content: space-between;
     gap: 10px;
   }
+  @media (max-width: 620px) {
+    .high-lights__row,
+    .high-lights__text,
+    .high-lights__content {
+      justify-content: center;
+      text-align: center;
+      row-gap: 10px;
+    }
+  }
+  @media (max-width: 440px) {
+    .high-lights__text {
+      font-size: 18px;
+    }
+    .high-lights__row {
+      font-size: 14px;
+    }
+  }
 </style>

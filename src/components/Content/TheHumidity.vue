@@ -53,6 +53,9 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .humidity {
+    width: 100%;
+  }
   .humidity__body {
     display: flex;
     align-items: center;
@@ -69,5 +72,10 @@ export default defineComponent({
   }
   .humidity__text:not(:last-child) {
     margin-bottom: 10px;
+  }
+  @media (max-width: 440px) {
+    .humidity__body {
+      flex-direction: column;
+    }
   }
 </style>

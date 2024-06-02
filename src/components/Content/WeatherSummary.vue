@@ -134,6 +134,7 @@ export default defineComponent({
     height: 30px;
   }
   .weather-summary__body {
+    margin-top: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -185,5 +186,26 @@ export default defineComponent({
     font-weight: 400;
     font-size: 20px;
     color: var(--color-black);
+  }
+  @media (max-width: 1164px) {
+    .weather-summary {
+      max-width: 700px;
+      width: 100%;
+    }
+  }
+  @media (max-width: 360px) {
+    .weather-summary__image {
+      width: 130px;
+      height: 130px;
+    }
+    .weather-summary__temperature {
+      font-size: 42px;
+    }
+    .weather-summary__description {
+      font-size: 24px;
+    }
+    .weather-summary__icon-search {
+      display: none;
+    }
   }
 </style>
