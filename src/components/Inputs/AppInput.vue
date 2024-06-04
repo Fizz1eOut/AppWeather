@@ -52,6 +52,7 @@ export default defineComponent({
   font-size: 32px;
   font-weight: 400;
   background-color: var(--color-transparent-white);
+  backdrop-filter: blur(6px);
   color: var(--color-black);
 }
 ::-webkit-input-placeholder {
