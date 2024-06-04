@@ -19,7 +19,7 @@ export default defineComponent({
     AppDivider,
     IconLocality,
     IconCalendar
-},
+  },
 
   props: {
     modelValue: {
@@ -34,6 +34,12 @@ export default defineComponent({
 
   emits: ['update:modelValue', 'getWeather'],
 
+  data() {
+    return {
+      weatherImages: {},
+    };
+  },
+
   computed: {
     inputValue: {
       get() {
@@ -45,16 +51,29 @@ export default defineComponent({
     },
   },
 
+  mounted() {
+    const imageFiles = import.meta.glob('../../assets/img/сlouds/*.png');
+    for (const path in imageFiles) {
+      imageFiles[path]().then((mod) => {
+        // Извлекаем URL изображения из загруженного модуля
+        const imageUrl = mod.default;
+        console.log(imageUrl);
+        // Получаем имя файла из пути
+        const fileName = path.split('/').pop().replace('.png', '');
+        console.log(fileName)
+        // Добавляем изображение в объект weatherImages
+        this.weatherImages[fileName] = imageUrl;
+      });
+    }
+  },
+
   methods: {
     getWeather() {
       this.$emit('getWeather');
     },
 
     getWeatherIcon(description) {
-      // Заменяем пробелы на %20
-      const formattedDescription = description.replace(/ /g, '%20');
-      // Формируем путь к изображению на основе данных
-      return `src/assets/img/сlouds/${formattedDescription}.png`;
+      return this.weatherImages[description];
     },
 
     formatDate() {
@@ -97,7 +116,7 @@ export default defineComponent({
           </div>
 
           <div v-if="weatherInfo" class="weather-summary__image">
-            <img :src="getWeatherIcon(weatherInfo?.weather[0]?.description)" alt="Icon">
+            <img :src="getWeatherIcon(weatherInfo.weather[0].description)" alt="Icon">
           </div>
         </div>
 

@@ -26,7 +26,8 @@ export default defineComponent({
     return {
       city: '',
       weatherInfo: null,
-      errorMessage: ''
+      errorMessage: '',
+      weatherImages: {},
     };
   },
 
@@ -49,6 +50,20 @@ export default defineComponent({
       this.getWeather();
     } else {
       this.getGeoLocation();
+    }
+
+    const imageFiles = import.meta.glob('../assets/img/background/*.png');
+    for (const path in imageFiles) {
+      imageFiles[path]().then((mod) => {
+        // Извлекаем URL изображения из загруженного модуля
+        const imageUrl = mod.default;
+        // console.log(imageUrl);
+        // Получаем имя файла из пути
+        const fileName = path.split('/').pop().replace('.png', '');
+        // console.log(fileName)
+        // Добавляем изображение в объект weatherImages
+        this.weatherImages[fileName] = imageUrl;
+      });
     }
   },
 
@@ -97,10 +112,7 @@ export default defineComponent({
     },
 
     getWeatherIcon(description) {
-      // Заменяем пробелы на %20
-      const formattedDescription = description.replace(/ /g, '%20');
-      // Формируем путь к изображению на основе данных
-      return `src/assets/img/background/${formattedDescription}.png`;
+      return this.weatherImages[description];
     }
   }
 });
