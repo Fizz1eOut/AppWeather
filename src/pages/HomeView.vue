@@ -127,7 +127,8 @@ export default defineComponent({
       <div class="weather-content">
         <weather-summary 
           v-model="city"
-          :weather-info="weatherInfo" 
+          :weather-info="weatherInfo"
+          :error-message="errorMessage"
           @get-weather="updateWeather"
         />
         <high-lights :weather-info="weatherInfo" />

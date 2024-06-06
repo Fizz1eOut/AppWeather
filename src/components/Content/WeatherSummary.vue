@@ -30,6 +30,10 @@ export default defineComponent({
       type: [Object, String, Number],
       default: null
     },
+    errorMessage: {
+      type: String,
+      default: ''
+    }
   },
 
   emits: ['update:modelValue', 'getWeather'],
@@ -57,10 +61,10 @@ export default defineComponent({
       imageFiles[path]().then((mod) => {
         // Извлекаем URL изображения из загруженного модуля
         const imageUrl = mod.default;
-        console.log(imageUrl);
+        // console.log(imageUrl);
         // Получаем имя файла из пути
         const fileName = path.split('/').pop().replace('.png', '');
-        console.log(fileName)
+        // console.log(fileName)
         // Добавляем изображение в объект weatherImages
         this.weatherImages[fileName] = imageUrl;
       });
@@ -107,6 +111,7 @@ export default defineComponent({
             @keydown.enter="getWeather"
           />
           <IconSearch class="weather-summary__icon-search" />
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
 
         <div class="weather-summary__body">
@@ -142,6 +147,9 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .error-message {
+    color: red;
+  }
   .weather-summary__header {
     position: relative;
   }
