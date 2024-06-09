@@ -11,6 +11,7 @@ import IconCloud from '@/components/Icons/IconCloud.vue';
 import IconSunrise from '@/components/Icons/IconSunrise.vue';
 import IconSunset from '@/components/Icons/IconSunset.vue';
 import HighLightsBottom from '@/components/Content/HighLightsBottom.vue';
+import WindChart from '@/components/Content/WindChart.vue';
 
 export default defineComponent({
   name: 'HighLights',
@@ -27,12 +28,21 @@ export default defineComponent({
     IconSunrise,
     IconSunset,
     HighLightsBottom,
+    WindChart
   },
 
   props: {
     weatherInfo: {
       type: Object,
       default: null
+    },
+    windData: {
+      type: Array,
+      required: true,
+    },
+    timeData: { 
+      type: Array,
+      required: true,
     },
   },
 
@@ -54,14 +64,14 @@ export default defineComponent({
     },
   },
 
-  methods: {
+  methods: {  
     getTime(seconds) {
       return new Date(seconds * 1000).toLocaleTimeString('uk-UA', { timeZone: 'Atlantic/Reykjavik' });
     },
 
     getPressureMn(hpa) {
       return Math.round(hpa * this.pressure);
-    }
+    },
   },
 });
 </script>
@@ -81,7 +91,7 @@ export default defineComponent({
                 <app-subtitle>Wind</app-subtitle>
               </template>
 
-              <img src="../../assets/img/icons/scheduleWing.png" alt="Graph">
+              <wind-chart :wind-data="windData" :time-data="timeData" />
 
               <template #text>
                 <span>{{ weatherInfo?.wind?.speed }} m/s</span>
@@ -225,7 +235,6 @@ export default defineComponent({
     margin-top: 20px;
   }
   .high-lights__item {
-    max-width: 260px;
     width: 100%;
   }
   .high-lights__wrapper {

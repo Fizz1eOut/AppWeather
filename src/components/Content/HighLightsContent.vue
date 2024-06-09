@@ -45,7 +45,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 220px;
+    height: 240px;
   }
   .high-lights__group:not(:last-child) {
     margin-bottom: 20px;
