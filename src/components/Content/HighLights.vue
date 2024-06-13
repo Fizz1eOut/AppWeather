@@ -91,7 +91,9 @@ export default defineComponent({
 
               <template #text>
                 <span>{{ weatherInfo?.wind?.speed }} m/s</span>
-                <span>{{ weatherInfo?.wind?.gust }} m/s</span>
+                <template v-if="weatherInfo?.wind?.gust">
+                  <span>{{ weatherInfo?.wind?.gust }} m/s</span>
+                </template>
               </template>
             </high-lights-content>
           </div>
