@@ -30,17 +30,20 @@ export default defineComponent({
       weatherImages: {},
       windData: [],
       timeData: [],
+      windGusts: [],
     };
   },
 
   watch: {
     '$route.query.city'(newCity) {
+      this.resetWindData()
       this.city = newCity || '';
       if (this.city) {
         this.getWeather();
       } else {
         this.weatherInfo = null;
         this.errorMessage = '';
+        this.resetWindData()
       }
     }
   },
@@ -85,6 +88,7 @@ export default defineComponent({
         this.updateWindData();
       } catch (error) {
         this.errorMessage = 'Failed to retrieve weather data. Please check if you entered the city correctly';
+        this.resetWindData()
       }
     },
     
@@ -119,32 +123,43 @@ export default defineComponent({
     updateWindData() {
       if (this.weatherInfo) {
         const currentSpeed = this.weatherInfo.wind.speed;
+        const currentGusts = this.weatherInfo?.wind.gust;
         const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // Добавляем текущие данные о скорости ветра в начало массива
         this.windData.unshift(currentSpeed);
-        // Используем текущее время вместо времени из массива timeData
         this.timeData.unshift(currentTime);
 
-        // Проверяем длину массивов и удаляем лишние элементы
-        const maxDataPoints = 4;
-        if (this.windData.length > maxDataPoints) {
-          this.windData = this.windData.slice(0, maxDataPoints);
-          // console.log(this.windData)
+        if (currentGusts !== undefined) {
+          this.windGusts.unshift(currentGusts);
         }
-        if (this.timeData.length > maxDataPoints) {
-          this.timeData = this.timeData.slice(0, maxDataPoints);
-          // console.log(this.windData)
+
+        // Проверяем длину массивов и удаляем лишние элементы
+        if (this.windData.length > 4) {
+          this.windData.pop();
+          // console.log(this.windData);
+        }
+        if (this.windGusts.length > 4) {
+          this.windGusts.pop();
+          // console.log(this.windGusts);
+        }
+        if (this.timeData.length > 4) {
+          this.timeData.pop();
+          // console.log(this.timeData);
         }
       }
     },
 
     startWindDataCollection() {
       setInterval(async () => {
-        await this.getWeather();
         this.updateWindData();
       }, 6000); // Обновление каждые 6 сек
     },
+
+    resetWindData() {
+      this.windData = [];
+      this.timeData = [];
+      this.windGusts = [];
+    }
   }
 });
 </script>
@@ -163,7 +178,12 @@ export default defineComponent({
           @get-weather="updateWeather"
         />
 
-        <high-lights :weather-info="weatherInfo" :wind-data="windData" :time-data="timeData" />
+        <high-lights
+          :weather-info="weatherInfo"
+          :wind-data="windData"
+          :time-data="timeData"
+          :wind-gusts="windGusts"
+        />
       </div>
 
       <div class="weather-bottom">

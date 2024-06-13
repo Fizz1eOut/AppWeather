@@ -17,7 +17,11 @@ export default defineComponent({
     timeData: {
       type: Array,
       required: true,
-    }
+    },
+    windGusts: { 
+      type: Array,
+      required: true,
+    },
   },
 
   data() {
@@ -25,39 +29,36 @@ export default defineComponent({
       series: [
         {
           name: "Wind Speed",
-          data: [0],
+          data: [],
         },
+        {
+          name: "Wind Gusts",
+          data: [],
+        }
       ],
 
       chartOptions: {
         chart: {
-          type: 'line', // Тип графика - линейный
-          height: 350, // Высота графика
+          type: 'line',
+          height: 350,
           zoom: {
-            enabled: false, // Отключаем возможность увеличения графика
+            enabled: false,
           },
-      },
+        },
 
-      dataLabels: {
-        enabled: false, // Отключаем отображение подписей данных
-      },
+        dataLabels: {
+          enabled: false,
+        },
 
-      stroke: {
-        curve: 'straight', // График с плавными кривыми
-      },
+        stroke: {
+          curve: 'straight',
+        },
 
-      title: {
-        text: 'Wind Speed Over Time', // Заголовок графика
-        align: 'left', // Выравнивание заголовка по левому краю
-      },
-
-         // Категории для оси X, инициализируются из пропсов, ограничение до первых 4 элементов
         xaxis: {
-          categories: this.timeData.slice(0, 4),
+          categories: [],
         },
 
         yaxis: {
-          // Заголовок для оси Y
           title: {
             text: 'Speed (m/s)',
           },
@@ -66,26 +67,29 @@ export default defineComponent({
     };
   },
 
-watch: {
-  windData: function(newVal) {
-    // console.log(newVal);
-    const newData = [0, ...newVal];
-    // Устанавливаем данные графика
-    this.series[0].data = newData;
+  watch: {
+    // Обработка изменений в массиве windData
+    windData(newVal) {
+      this.series[0].data = newVal;
+    },
+    // Обработка изменений в массиве timeData
+    timeData(newVal) {
+      this.chartOptions.xaxis.categories = newVal;
+    },
+    // Обработка изменений в windGusts
+    windGusts(newVal) {
+      if (typeof newVal === 'number') {
+        this.series[1].data = [newVal];
+      } else if (Array.isArray(newVal)) { 
+        this.series[1].data = newVal;
+      }
+    }
   },
-  timeData: function(newVal) {  
-    // console.log(newVal);
-    this.chartOptions.xaxis.categories = newVal;
-  }
-},
 
   mounted() {
-    // Добавляем фиксированный ноль к началу данных о скорости ветра
-    const newData = [0, ...this.windData];
-    // Устанавливаем данные графика
-    this.series[0].data = newData;
-
-    // Устанавливаем категории для оси X
+    // Инициализация данных графика при монтировании компонента
+    this.series[0].data = this.windData;
+    this.series[1].data = this.windGusts; // добавили эту строку
     this.chartOptions.xaxis.categories = this.timeData;
   },
 });
@@ -98,7 +102,5 @@ watch: {
 </template>
 
 <style scoped>
-.apexcharts-tooltip {
-  color: #000;
-}
+
 </style>
