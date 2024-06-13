@@ -5,12 +5,8 @@ import AppUnderlay from '@/components/Base/AppUnderlay.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
 import HighLightsContent from '@/components/Content/HighLightsContent.vue';
 import AppSubtitle from '@/components/Base/AppSubtitle.vue';
-import IconWindy from '@/components/Icons/IconWindy.vue';
-import IconThermometer from '@/components/Icons/IconThermometer.vue';
-import IconCloud from '@/components/Icons/IconCloud.vue';
 import IconSunrise from '@/components/Icons/IconSunrise.vue';
 import IconSunset from '@/components/Icons/IconSunset.vue';
-import HighLightsBottom from '@/components/Content/HighLightsBottom.vue';
 import WindChart from '@/components/Content/WindChart.vue';
 
 export default defineComponent({
@@ -22,12 +18,8 @@ export default defineComponent({
     AppTitle,
     HighLightsContent,
     AppSubtitle,
-    IconWindy,
-    IconThermometer,
-    IconCloud,
     IconSunrise,
     IconSunset,
-    HighLightsBottom,
     WindChart
   },
 
@@ -41,6 +33,10 @@ export default defineComponent({
       required: true,
     },
     timeData: { 
+      type: Array,
+      required: true,
+    },
+    windGusts: { 
       type: Array,
       required: true,
     },
@@ -91,36 +87,13 @@ export default defineComponent({
                 <app-subtitle>Wind</app-subtitle>
               </template>
 
-              <wind-chart :wind-data="windData" :time-data="timeData" />
+              <wind-chart :wind-data="windData" :time-data="timeData" :wind-gusts="windGusts" />
 
               <template #text>
                 <span>{{ weatherInfo?.wind?.speed }} m/s</span>
-                <span>{{ weatherInfo?.wind?.deg }} deg</span>
+                <span>{{ weatherInfo?.wind?.gust }} m/s</span>
               </template>
             </high-lights-content>
-
-            <high-lights-bottom>
-              <template #title>
-                <app-subtitle>Wind gusts</app-subtitle>
-              </template>
-              <template #text>
-                <div v-if="weatherInfo?.wind?.gust">
-                  {{ Math.round(weatherInfo?.wind?.gust) }} m/s
-                </div>
-                <div v-else>
-                  <span class="error">There are no gusts of wind</span>
-                </div>
-              </template>
-
-              <template #row>
-                <icon-windy class="windy" />
-                <span>
-                  Learn 
-                  <a class="link" href="https://www.windy.com/articles/weather-phenomena-what-s-the-difference-between-sustained-winds-and-wind-gusts-10390?satellite,7.787,115.115,5">more</a>
-                  about gusts
-                </span>
-              </template>
-            </high-lights-bottom>
           </div>
 
           <div class="high-lights__item">
@@ -135,20 +108,6 @@ export default defineComponent({
                 <span>{{ getPressureMn(weatherInfo?.main?.pressure) }} mm</span>
               </template>
             </high-lights-content>
-
-            <high-lights-bottom>
-              <template #title>
-                <app-subtitle>Feels like</app-subtitle>
-              </template>
-              <template #text>
-                {{ Math.round(weatherInfo?.main?.feels_like) }} °С
-              </template>
-
-              <template #row>
-                <icon-thermometer class="temp" />
-                <span>How hot or cold it really feels</span>
-              </template>
-            </high-lights-bottom>
           </div>
 
           <div class="high-lights__item">
@@ -175,20 +134,6 @@ export default defineComponent({
                 </div>
               </template>
             </high-lights-content>
-
-            <high-lights-bottom>
-              <template #title>
-                <app-subtitle>Cloudiness</app-subtitle>
-              </template>
-              <template #text>
-                {{ weatherInfo?.clouds?.all }} %
-              </template>
-
-              <template #row>
-                <icon-cloud class="cloud" />
-                <span>The sky fraction obscured by clouds</span>
-              </template>
-            </high-lights-bottom>
           </div>
         </div>
       </app-container>

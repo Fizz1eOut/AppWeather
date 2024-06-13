@@ -18,8 +18,8 @@ export default defineComponent({
     IconSearch,
     AppDivider,
     IconLocality,
-    IconCalendar
-  },
+    IconCalendar,
+},
 
   props: {
     modelValue: {
@@ -117,7 +117,10 @@ export default defineComponent({
         <div class="weather-summary__body">
           <div class="weather-summary__content">
             <div class="weather-summary__temperature">{{ Math.round(weatherInfo?.main?.temp) }} °С</div>
-            <div class="weather-summary__description"> {{ capitalizeFirstLetter(weatherInfo?.weather[0]?.description) }} </div>
+            <div class="weather-summary__description"> {{ capitalizeFirstLetter(weatherInfo?.weather[0]?.description) }}</div>
+            <div class="weather-summary__option">Feels like: {{ Math.round(weatherInfo?.main?.feels_like) }} °С</div>
+            <div class="weather-summary__option">Cloudiness: {{ weatherInfo?.clouds?.all }} %</div>
+            <div class="weather-summary__option">Humidity: {{ weatherInfo?.main.humidity }} %</div>
           </div>
 
           <div v-if="weatherInfo" class="weather-summary__image">
@@ -175,6 +178,13 @@ export default defineComponent({
   .weather-summary__description {
     font-weight: 400;
     font-size: 30px;
+    line-height: 30px;
+    color: var(--color-black);
+    margin-bottom: 10px;
+  }
+  .weather-summary__option {
+    font-weight: 400;
+    font-size: 20px;
     color: var(--color-black);
   }
   .weather-summary__image {

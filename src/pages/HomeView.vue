@@ -4,10 +4,10 @@ import { API_KEY, BASE_URL } from '@/assets/api/script';
 import { defineComponent } from 'vue';
 import WeatherSummary from '@/components/Content/WeatherSummary.vue';
 import HighLights from '@/components/Content/HighLights.vue';
-import TheCoordinates from '@/components/Content/TheCoordinates.vue';
-import TheHumidity from '@/components/Content/TheHumidity.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
+// import TheCoordinates from '@/components/Content/TheCoordinates.vue';
+// import TheHumidity from '@/components/Content/TheHumidity.vue';
 
 export default defineComponent({
   name: 'HomeView',
@@ -16,8 +16,6 @@ export default defineComponent({
     AppContainer,
     WeatherSummary,
     HighLights,
-    TheCoordinates,
-    TheHumidity,
     AppInput,
     AppTitle
 },
@@ -186,10 +184,10 @@ export default defineComponent({
         />
       </div>
 
-      <div class="weather-bottom">
+      <!-- <div class="weather-bottom">
         <the-coordinates :weather-info="weatherInfo" />
         <the-humidity :weather-info="weatherInfo" />
-      </div>
+      </div> -->
     </app-container>
   </div>
 
