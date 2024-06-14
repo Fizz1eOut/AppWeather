@@ -56,4 +56,7 @@ export default defineComponent({
     color: var(--color-black);
     justify-content: center;
   }
+  .high-lights__text> *:not(:last-child) {
+    margin-right: 10px;
+  }
 </style>

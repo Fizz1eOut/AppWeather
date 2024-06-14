@@ -6,6 +6,7 @@ import WeatherSummary from '@/components/Content/WeatherSummary.vue';
 import HighLights from '@/components/Content/HighLights.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
+import AppUnderlay from '@/components/Base/AppUnderlay.vue';
 // import TheCoordinates from '@/components/Content/TheCoordinates.vue';
 // import TheHumidity from '@/components/Content/TheHumidity.vue';
 
@@ -17,7 +18,8 @@ export default defineComponent({
     WeatherSummary,
     HighLights,
     AppInput,
-    AppTitle
+    AppTitle,
+    AppUnderlay
 },
 
   data() {
@@ -29,6 +31,8 @@ export default defineComponent({
       windData: [],
       timeData: [],
       windGusts: [],
+      countries: [],
+      filteredCountries: []
     };
   },
 
@@ -70,9 +74,10 @@ export default defineComponent({
     }
 
     this.startWindDataCollection();
+    this.fetchCountries();
   },
 
- methods: {
+  methods: {
     async getWeather() {
       if (!this.city) return;
       try {
@@ -102,6 +107,45 @@ export default defineComponent({
           this.updateWindData();
         });
       }
+    },
+
+    async fetchCountries() {
+      try {
+        const response = await fetch('https://countriesnow.space/api/v0.1/countries/population/cities');
+        if (!response.ok) {
+          throw new Error('Failed to fetch countries');
+        }
+        const responseData = await response.json();
+        // console.log(responseData)
+         // Преобразуем данные в массив объектов, содержащих имена стран
+        this.countries = responseData.data.map(item => ({
+          name: item.city
+        }));
+        // console.log(this.countries)
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    },
+
+    handleInput() {
+      if (this.city.length >= 1) {
+        const value = this.city.toLowerCase().trim();
+        console.log(value);
+        this.filteredCountries = this.countries
+        .filter(country =>
+          country.name.toLowerCase().startsWith(value)
+        )
+        .slice(0, 4);
+        console.log(this.filteredCountries);
+      } else {
+        this.filteredCountries = [];
+      }
+    },
+
+    selectCountry(country) {
+      this.city = country.name;
+      this.filteredCountries = [];
+      this.updateWeather();
     },
 
     updateWeather() {
@@ -204,8 +248,26 @@ export default defineComponent({
             placeholder="Enter your city"
             class="weather-container__input"
             @keydown.enter="updateWeather"
+            @input="handleInput"
           />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+          <div v-if="filteredCountries.length > 0" class="country">
+            <app-underlay>
+              <app-container size="md">
+                <ul class="country-list">
+                  <li
+                    v-for="country in filteredCountries"
+                    :key="country.name"
+                    class="country-list__city"
+                    @click="selectCountry(country)"
+                  >
+                    {{ country.name }}
+                  </li>
+                </ul>
+              </app-container>
+            </app-underlay>
+          </div>
         </div>
       </app-container>
     </div>
@@ -213,6 +275,18 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .country-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .country-list__city {
+    font-size: 20px;
+    font-weight: 400px;
+    color: var(--color-black);
+    cursor: pointer;
+  }
   .weather-container {
     width: 100%;
     height: 100vh;
