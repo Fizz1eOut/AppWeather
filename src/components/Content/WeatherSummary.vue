@@ -7,6 +7,8 @@ import IconSearch from '@/components/Icons/IconSearch.vue';
 import AppDivider from '@/components/Base/AppDivider.vue';
 import IconLocality from '@/components/Icons/IconLocality.vue';
 import IconCalendar from '@/components/Icons/IconCalendar.vue';
+// import Multiselect from '@vueform/multiselect';
+// import '@vueform/multiselect/themes/default.css';
 
 export default defineComponent({
   name: 'WeatherSummary',
@@ -150,6 +152,19 @@ export default defineComponent({
               </app-container>
             </app-underlay>
           </div>
+
+          <!-- <multiselect
+            v-model="selectedCity"
+            :options="cities"
+            :multiple="false"
+            :searchable="true"
+            placeholder="Enter your city"
+            label="name"
+            :clear-on-select="true"
+            :close-on-select="true"
+            :allow-empty="false"
+            @click="getWeather"
+          /> -->
         </div>
 
         <div class="weather-summary__body">
@@ -191,15 +206,15 @@ export default defineComponent({
   .city-list {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
     flex-wrap: wrap;
   }
   .city-list__city {
     font-size: 20px;
-    font-weight: 400px;
+    font-weight: 400;
     color: var(--color-black);
     cursor: pointer;
+    text-decoration: underline;
   }
   .error-message {
     color: red;

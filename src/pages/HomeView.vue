@@ -19,7 +19,7 @@ export default defineComponent({
     HighLights,
     AppInput,
     AppTitle,
-    AppUnderlay
+    AppUnderlay,
 },
 
   data() {
@@ -281,13 +281,14 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 20px;
   }
   .city-list__city {
     font-size: 20px;
-    font-weight: 400px;
+    font-weight: 400;
     color: var(--color-black);
     cursor: pointer;
+    text-decoration: underline;
   }
   .weather-container {
     width: 100%;
