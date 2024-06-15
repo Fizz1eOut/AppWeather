@@ -31,8 +31,8 @@ export default defineComponent({
       windData: [],
       timeData: [],
       windGusts: [],
-      countries: [],
-      filteredCountries: []
+      cities: [],
+      filteredCities: []
     };
   },
 
@@ -74,7 +74,7 @@ export default defineComponent({
     }
 
     this.startWindDataCollection();
-    this.fetchCountries();
+    this.fetchCities();
   },
 
   methods: {
@@ -109,42 +109,40 @@ export default defineComponent({
       }
     },
 
-    async fetchCountries() {
+    async fetchCities() {
       try {
         const response = await fetch('https://countriesnow.space/api/v0.1/countries/population/cities');
         if (!response.ok) {
-          throw new Error('Failed to fetch countries');
+          throw new Error('Failed to fetch cities');
         }
         const responseData = await response.json();
         // console.log(responseData)
          // Преобразуем данные в массив объектов, содержащих имена стран
-        this.countries = responseData.data.map(item => ({
+        this.cities = responseData.data.map(item => ({
           name: item.city
         }));
-        // console.log(this.countries)
+        // console.log(this.cities)
       } catch (error) {
-        console.error('Error fetching countries:', error);
+        console.error('Error fetching cities:', error);
       }
     },
 
     handleInput() {
-      if (this.city.length >= 1) {
+      if (this.city.trim().length >= 1) {
         const value = this.city.toLowerCase().trim();
-        console.log(value);
-        this.filteredCountries = this.countries
-        .filter(country =>
-          country.name.toLowerCase().startsWith(value)
-        )
-        .slice(0, 4);
-        console.log(this.filteredCountries);
+        this.filteredCities = this.cities
+          .filter(city =>
+            city.name.toLowerCase().startsWith(value)
+          )
+          .slice(0, 4);
       } else {
-        this.filteredCountries = [];
+        this.filteredCities = [];
       }
     },
 
-    selectCountry(country) {
-      this.city = country.name;
-      this.filteredCountries = [];
+    selectCities(item) {
+      this.city = item.name;
+      this.filteredCities = [];
       this.updateWeather();
     },
 
@@ -213,10 +211,14 @@ export default defineComponent({
     </div>
     <app-container size="xl">
       <div class="weather-content">
-        <weather-summary 
+        <weather-summary
           v-model="city"
           :weather-info="weatherInfo"
           :error-message="errorMessage"
+          :cities="cities"
+          :filtered-cities="filteredCities"
+          :handle-input="handleInput"
+          :select-city="selectCities"
           @get-weather="updateWeather"
         />
 
@@ -252,17 +254,17 @@ export default defineComponent({
           />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-          <div v-if="filteredCountries.length > 0" class="country">
+          <div v-if="filteredCities.length > 0" class="city">
             <app-underlay>
               <app-container size="md">
-                <ul class="country-list">
+                <ul class="city-list">
                   <li
-                    v-for="country in filteredCountries"
-                    :key="country.name"
-                    class="country-list__city"
-                    @click="selectCountry(country)"
+                    v-for="filteredCity in filteredCities"
+                    :key="filteredCity.name"
+                    class="city-list__city"
+                    @click="selectCities(filteredCity)"
                   >
-                    {{ country.name }}
+                    {{ filteredCity.name }}
                   </li>
                 </ul>
               </app-container>
@@ -275,13 +277,13 @@ export default defineComponent({
 </template>
 
 <style scoped>
-  .country-list {
+  .city-list {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
   }
-  .country-list__city {
+  .city-list__city {
     font-size: 20px;
     font-weight: 400px;
     color: var(--color-black);

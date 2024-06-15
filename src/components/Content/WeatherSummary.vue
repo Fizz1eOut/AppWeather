@@ -33,10 +33,26 @@ export default defineComponent({
     errorMessage: {
       type: String,
       default: ''
+    },
+    cities: {
+      type: Array,
+      default: () => []
+    },
+    filteredCities: {
+      type: Array,
+      default: () => []
+    },
+    handleInput: {
+      type: Function,
+      required: true 
+    },
+    selectCity: {
+      type: Function,
+      required: true
     }
   },
 
-  emits: ['update:modelValue', 'getWeather'],
+  emits: ['update:modelValue', 'getWeather', 'select-cities'],
 
   data() {
     return {
@@ -76,6 +92,10 @@ export default defineComponent({
       this.$emit('getWeather');
     },
 
+    selectCities(item) {
+      this.$emit('select-cities', item);
+    },
+
     getWeatherIcon(description) {
       return this.weatherImages[description];
     },
@@ -109,9 +129,27 @@ export default defineComponent({
             v-model="inputValue"
             placeholder="Enter your city"
             @keydown.enter="getWeather"
+            @input="handleInput"
           />
           <IconSearch class="weather-summary__icon-search" />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+          <div v-if="filteredCities.length > 0" class="city">
+            <app-underlay>
+              <app-container size="md">
+                <ul class="city-list">
+                  <li
+                    v-for="filteredCity in filteredCities"
+                    :key="filteredCity.name"
+                    class="city-list__city"
+                    @click="selectCity(filteredCity)"
+                  >
+                    {{ filteredCity.name }}
+                  </li>
+                </ul>
+              </app-container>
+            </app-underlay>
+          </div>
         </div>
 
         <div class="weather-summary__body">
@@ -150,6 +188,19 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .city-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .city-list__city {
+    font-size: 20px;
+    font-weight: 400px;
+    color: var(--color-black);
+    cursor: pointer;
+  }
   .error-message {
     color: red;
   }
