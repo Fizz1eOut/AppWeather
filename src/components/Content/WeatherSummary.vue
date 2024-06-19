@@ -7,6 +7,7 @@ import IconSearch from '@/components/Icons/IconSearch.vue';
 import AppDivider from '@/components/Base/AppDivider.vue';
 import IconLocality from '@/components/Icons/IconLocality.vue';
 import IconCalendar from '@/components/Icons/IconCalendar.vue';
+import CitySuggestions from '@/components/Content/CitySuggestions.vue';
 // import Multiselect from '@vueform/multiselect';
 // import '@vueform/multiselect/themes/default.css';
 
@@ -21,6 +22,7 @@ export default defineComponent({
     AppDivider,
     IconLocality,
     IconCalendar,
+    CitySuggestions
 },
 
   props: {
@@ -36,10 +38,6 @@ export default defineComponent({
       type: String,
       default: ''
     },
-    cities: {
-      type: Array,
-      default: () => []
-    },
     filteredCities: {
       type: Array,
       default: () => []
@@ -48,13 +46,13 @@ export default defineComponent({
       type: Function,
       required: true 
     },
-    selectCity: {
+    selectCitiesProp: {
       type: Function,
       required: true
     }
   },
 
-  emits: ['update:modelValue', 'getWeather', 'select-cities'],
+  emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather'],
 
   data() {
     return {
@@ -93,13 +91,16 @@ export default defineComponent({
     getWeather() {
       this.$emit('getWeather');
     },
-
-    selectCities(item) {
-      this.$emit('select-cities', item);
-    },
-
+    
     getWeatherIcon(description) {
       return this.weatherImages[description];
+    },
+
+    handleSelectCities(item) {
+      this.$emit('select-cities', item);
+    },
+    updateWeather() {
+      this.$emit('update-weather');
     },
 
     formatDate() {
@@ -130,28 +131,16 @@ export default defineComponent({
           <app-input 
             v-model="inputValue"
             placeholder="Enter your city"
-            @keydown.enter="getWeather"
+            @keydown.enter="updateWeather"
             @input="handleInput"
           />
           <IconSearch class="weather-summary__icon-search" />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-          <div v-if="filteredCities.length > 0" class="city">
-            <app-underlay>
-              <app-container size="md">
-                <ul class="city-list">
-                  <li
-                    v-for="filteredCity in filteredCities"
-                    :key="filteredCity.name"
-                    class="city-list__city"
-                    @click="selectCity(filteredCity)"
-                  >
-                    {{ filteredCity.name }}
-                  </li>
-                </ul>
-              </app-container>
-            </app-underlay>
-          </div>
+          <city-suggestions
+            :filtered-cities="filteredCities"
+            :select-city="handleSelectCities"
+          />
 
           <!-- <multiselect
             v-model="selectedCity"
@@ -203,19 +192,6 @@ export default defineComponent({
 </template>
 
 <style scoped>
-  .city-list {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .city-list__city {
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--color-black);
-    cursor: pointer;
-    text-decoration: underline;
-  }
   .error-message {
     color: red;
   }

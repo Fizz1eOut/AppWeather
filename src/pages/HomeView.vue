@@ -1,25 +1,15 @@
 <script>
-import AppContainer from '@/components/Base/AppContainer.vue';
-import { API_KEY, BASE_URL } from '@/assets/api/script';
+import { API_KEY, BASE_URL } from '@/api/script';
 import { defineComponent } from 'vue';
-import WeatherSummary from '@/components/Content/WeatherSummary.vue';
-import HighLights from '@/components/Content/HighLights.vue';
-import AppInput from '@/components/Inputs/AppInput.vue';
-import AppTitle from '@/components/Base/AppTitle.vue';
-import AppUnderlay from '@/components/Base/AppUnderlay.vue';
-// import TheCoordinates from '@/components/Content/TheCoordinates.vue';
-// import TheHumidity from '@/components/Content/TheHumidity.vue';
+import WeatherDetails from '@/components/Content/WeatherDetails.vue';
+import WeatherSearch from '@/components/Content/WeatherSearch.vue';
 
 export default defineComponent({
   name: 'HomeView',
 
   components: {
-    AppContainer,
-    WeatherSummary,
-    HighLights,
-    AppInput,
-    AppTitle,
-    AppUnderlay,
+    WeatherDetails,
+    WeatherSearch
 },
 
   data() {
@@ -140,6 +130,10 @@ export default defineComponent({
       }
     },
 
+    updateCity(newCity) {
+      this.city = newCity;
+    },
+
     selectCities(item) {
       this.city = item.name;
       this.filteredCities = [];
@@ -151,6 +145,8 @@ export default defineComponent({
         this.$router.push({ path: '/', query: {} });
         return;
       }
+
+      this.filteredCities = [];
 
       this.$router.push({ query: { city: this.city } });
       this.getWeather();
@@ -199,97 +195,40 @@ export default defineComponent({
       this.windData = [];
       this.timeData = [];
       this.windGusts = [];
-    }
+    },
   }
 });
 </script>
-
 <template>
-  <div v-if="weatherInfo" class="weather">
-    <div v-if="weatherInfo" class="weather-background">
-      <img :src="getWeatherIcon(weatherInfo.weather[0].description)" alt="Icon" class="background-image">
-    </div>
-    <app-container size="xl">
-      <div class="weather-content">
-        <weather-summary
-          v-model="city"
-          :weather-info="weatherInfo"
-          :error-message="errorMessage"
-          :cities="cities"
-          :filtered-cities="filteredCities"
-          :handle-input="handleInput"
-          :select-city="selectCities"
-          @get-weather="updateWeather"
-        />
+  <weather-details
+    v-if="weatherInfo"
+    :weather-info="weatherInfo"
+    :model-value="city"
+    :error-message="errorMessage"
+    :filtered-cities="filteredCities"
+    :wind-data="windData"
+    :time-data="timeData"
+    :wind-gusts="windGusts"
+    :handle-input="handleInput"
+    :select-cities-prop="selectCities"
+    @update-weather="updateWeather"
+    @update:model-value="updateCity"
+    @select-cities="selectCities"
+  />
 
-        <high-lights
-          :weather-info="weatherInfo"
-          :wind-data="windData"
-          :time-data="timeData"
-          :wind-gusts="windGusts"
-        />
-      </div>
-
-      <!-- <div class="weather-bottom">
-        <the-coordinates :weather-info="weatherInfo" />
-        <the-humidity :weather-info="weatherInfo" />
-      </div> -->
-    </app-container>
-  </div>
-
-  <div v-else>
-    <div class="weather-container">
-      <app-container size="md">
-        <div class="weather-wrapper">
-          <app-title class="weather-container__title">
-            Weather App
-          </app-title>
-          
-          <app-input
-            v-model="city"
-            placeholder="Enter your city"
-            class="weather-container__input"
-            @keydown.enter="updateWeather"
-            @input="handleInput"
-          />
-          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-          <div v-if="filteredCities.length > 0" class="city">
-            <app-underlay>
-              <app-container size="md">
-                <ul class="city-list">
-                  <li
-                    v-for="filteredCity in filteredCities"
-                    :key="filteredCity.name"
-                    class="city-list__city"
-                    @click="selectCities(filteredCity)"
-                  >
-                    {{ filteredCity.name }}
-                  </li>
-                </ul>
-              </app-container>
-            </app-underlay>
-          </div>
-        </div>
-      </app-container>
-    </div>
-  </div>
+  <weather-search 
+    v-else
+    :model-value="city"
+    :error-message="errorMessage"
+    :filtered-cities="filteredCities"
+    :handle-input="handleInput"
+    @update:model-value="updateCity"
+    @update-weather="updateWeather"
+    @select-cities="selectCities"
+  />
 </template>
 
 <style scoped>
-  .city-list {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  .city-list__city {
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--color-black);
-    cursor: pointer;
-    text-decoration: underline;
-  }
   .weather-container {
     width: 100%;
     height: 100vh;
@@ -315,50 +254,5 @@ export default defineComponent({
   }
   .error-message {
     color: red;
-  }
-  .weather {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .weather-content {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  .weather-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .weather-bottom {
-    margin-top: 20px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
-  @media (max-width: 1164px) {
-    .weather-content {
-      flex-direction: column;
-      align-items: center;
-    }
-    .weather-bottom {
-      flex-direction: column;
-    }
   }
 </style>
