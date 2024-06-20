@@ -3,6 +3,7 @@ import { API_KEY, BASE_URL } from '@/api/script';
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
+import debounce from 'lodash/debounce';
 
 export default defineComponent({
   name: 'HomeView',
@@ -31,7 +32,7 @@ export default defineComponent({
       this.resetWindData()
       this.city = newCity || '';
       if (this.city) {
-        this.getWeather();
+        this.debouncedGetWeather();
       } else {
         this.weatherInfo = null;
         this.errorMessage = '';
@@ -39,12 +40,16 @@ export default defineComponent({
       }
     }
   },
+  
+  created() {
+    this.debouncedGetWeather = debounce(this.getWeather, 500);
+  },
 
   mounted() {
     this.city = this.$route.query.city || '';
 
     if (this.city) {
-      this.getWeather();
+      this.debouncedGetWeather();
     } else {
       this.getGeoLocation();
     }
@@ -149,7 +154,7 @@ export default defineComponent({
       this.filteredCities = [];
 
       this.$router.push({ query: { city: this.city } });
-      this.getWeather();
+      this.debouncedGetWeather();
     },
 
     getWeatherIcon(description) {
@@ -199,6 +204,7 @@ export default defineComponent({
   }
 });
 </script>
+
 <template>
   <weather-details
     v-if="weatherInfo"
