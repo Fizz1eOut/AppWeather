@@ -5,7 +5,7 @@ import AppTitle from '@/components/Base/AppTitle.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import CitySuggestions from '@/components/Content/CitySuggestions.vue';
 
-export default defineComponent ({
+export default defineComponent({
   name: 'WeatherSearch',
   
   components: {
@@ -13,7 +13,7 @@ export default defineComponent ({
     AppTitle,
     AppInput,
     CitySuggestions
-},
+  },
 
   props: {
     modelValue: {
@@ -65,50 +65,54 @@ export default defineComponent ({
         <app-title class="weather-container__title">
           Weather App
         </app-title>
-          
-        <app-input
-          v-model="inputValue"
-          placeholder="Enter your city"
-          class="weather-container__input"
-          @keydown.enter="updateWeather"
-          @input="handleInput"
-        />
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
-        <city-suggestions
-          :filtered-cities="filteredCities"
-          :select-city="handleSelectCities"
-        />
+        <div class="input-container">
+          <app-input
+            v-model="inputValue"
+            placeholder="Enter your city"
+            @keydown.enter="updateWeather"
+            @input="handleInput"
+          />
+
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+          
+          <city-suggestions
+            :filtered-cities="filteredCities"
+            :select-city="handleSelectCities"
+          />
+        </div>
       </div>
     </app-container>
   </div>
 </template>
 
 <style scoped>
-  .weather-container {
-    width: 100%;
-    height: 100vh;
-    background-image: url(../assets/img/home.jpg);
-    background-position: center;
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.weather-container {
+  width: 100%;
+  height: 100vh;
+  background-image: url(../assets/img/home.jpg);
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.weather-container__title {
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+@media (max-width: 499px) {
   .weather-container__title {
-    font-size: 42px;
-    text-align: center;
-    margin-bottom: 50px;
+    font-size: 32px;
   }
-  @media (max-width: 499px) {
-    .weather-container__title {
-      font-size: 32px;
-    }
-  }
-  .weather-container__input .input {
-    background-color: red;
-  }
-  .error-message {
-    color: red;
-  }
+}
+.input-container {
+  position: relative;
+}
+.error-message {
+  color: red;
+  margin-top: 8px;
+}
 </style>

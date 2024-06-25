@@ -49,7 +49,11 @@ export default defineComponent({
     selectCitiesProp: {
       type: Function,
       required: true
-    }
+    },
+    currentTime: {
+      type: Number,
+      required: true,
+    },
   },
 
   emits: ['update-weather', 'update:modelValue', 'select-cities'],
@@ -69,6 +73,13 @@ export default defineComponent({
         this.$emit('update:modelValue', newValue);
       }
     },
+    
+    weatherIcon() {
+      if (this.weatherInfo) {
+        return this.weatherImages[this.weatherInfo.weather[0].description];
+      }
+      return null;
+    }
   },
 
   mounted() {
@@ -94,9 +105,6 @@ export default defineComponent({
     handleSelectCities(item) {
       this.$emit('select-cities', item);
     },
-    getWeatherIcon(description) {
-      return this.weatherImages[description];
-    },
   },
 })
 </script>
@@ -104,7 +112,7 @@ export default defineComponent({
 <template>
   <div v-if="weatherInfo" class="weather">
     <div v-if="weatherInfo" class="weather-background">
-      <img :src="getWeatherIcon(weatherInfo.weather[0].description)" alt="Icon" class="background-image">
+      <img :src="weatherIcon" alt="Icon" class="background-image">
     </div>
     <app-container size="xl">
       <div class="weather-content">
@@ -124,6 +132,7 @@ export default defineComponent({
           :wind-data="windData"
           :time-data="timeData"
           :wind-gusts="windGusts"
+          :current-time="currentTime"
         />
       </div>
     </app-container>

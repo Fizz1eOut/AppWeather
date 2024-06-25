@@ -8,6 +8,7 @@ import AppSubtitle from '@/components/Base/AppSubtitle.vue';
 import IconSunrise from '@/components/Icons/IconSunrise.vue';
 import IconSunset from '@/components/Icons/IconSunset.vue';
 import WindChart from '@/components/Content/WindChart.vue';
+import SunChart from '@/components/Content/SunChart.vue'
 
 export default defineComponent({
   name: 'HighLights',
@@ -20,7 +21,8 @@ export default defineComponent({
     AppSubtitle,
     IconSunrise,
     IconSunset,
-    WindChart
+    WindChart,
+    SunChart
   },
 
   props: {
@@ -40,6 +42,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    currentTime: {
+      type: Number,
+      required: true,
+    },
   },
 
   data() {
@@ -53,22 +59,24 @@ export default defineComponent({
       return this.weatherInfo?.timezone;
     },
     sunriseTime() {
-      return this.getTime(this.weatherInfo?.sys?.sunrise + this.timezone);
+      return this.weatherInfo?.sys?.sunrise + this.timezone;
     },
     sunsetTime() {
-      return this.getTime(this.weatherInfo?.sys?.sunset + this.timezone);
+      return this.weatherInfo?.sys?.sunset + this.timezone;
     },
+    getPressureMn() {
+      const hpa = this.weatherInfo?.main?.pressure;
+      return hpa ? Math.round(hpa * this.pressure) : 0;
+    }
   },
+
+
 
   methods: {  
     getTime(seconds) {
       return new Date(seconds * 1000).toLocaleTimeString('uk-UA', { timeZone: 'Atlantic/Reykjavik' });
     },
-
-    getPressureMn(hpa) {
-      return Math.round(hpa * this.pressure);
-    },
-  },
+  }
 });
 </script>
 
@@ -107,7 +115,7 @@ export default defineComponent({
               <img src="../../assets/img/icons/barometer.png" alt="Graph">
 
               <template #text>
-                <span>{{ getPressureMn(weatherInfo?.main?.pressure) }} mm</span>
+                <span>{{ getPressureMn }} mm</span>
               </template>
             </high-lights-content>
           </div>
@@ -118,20 +126,24 @@ export default defineComponent({
                 <app-subtitle>Sunrise and sunset</app-subtitle>
               </template>
 
-              <img src="../../assets/img/icons/SunriseSunset.png" alt="Graph">
-
+              <sun-chart 
+                :sunrise="sunriseTime" 
+                :sunset="sunsetTime" 
+                :current-time="currentTime"
+              />
+              
               <template #text>
                 <div class="high-lights__wrapper">
                   <div class="high-lights__sunrise">
                     <icon-sunrise class="sunrise" />
                     <div class="">Sunrise</div>
-                    <div class="high-lights__time">{{ sunriseTime }}</div>
+                    <div class="high-lights__time">{{ getTime(sunriseTime) }}</div>
                   </div>
 
                   <div class="high-lights__sunset">
                     <icon-sunset class="sunset" />
                     <div class="">Sunset</div>
-                    <div class="high-lights__time">{{ sunsetTime }}</div>
+                    <div class="high-lights__time">{{ getTime(sunsetTime) }}</div>
                   </div>
                 </div>
               </template>

@@ -49,7 +49,7 @@ export default defineComponent({
     selectCitiesProp: {
       type: Function,
       required: true
-    }
+    },
   },
 
   emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather'],
@@ -69,6 +69,13 @@ export default defineComponent({
         this.$emit('update:modelValue', newValue);
       }
     },
+
+    weatherIcon() {
+      if (this.weatherInfo) {
+        return this.weatherImages[this.weatherInfo.weather[0].description];
+      }
+      return null;
+    }
   },
 
   mounted() {
@@ -90,10 +97,6 @@ export default defineComponent({
   methods: {
     getWeather() {
       this.$emit('getWeather');
-    },
-    
-    getWeatherIcon(description) {
-      return this.weatherImages[description];
     },
 
     handleSelectCities(item) {
@@ -166,7 +169,7 @@ export default defineComponent({
           </div>
 
           <div v-if="weatherInfo" class="weather-summary__image">
-            <img :src="getWeatherIcon(weatherInfo.weather[0].description)" alt="Icon">
+            <img :src="weatherIcon" alt="Icon">
           </div>
         </div>
 

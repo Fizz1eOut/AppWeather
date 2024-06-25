@@ -23,7 +23,8 @@ export default defineComponent({
       timeData: [],
       windGusts: [],
       cities: [],
-      filteredCities: []
+      filteredCities: [],
+      currentLocalTime: null,
     };
   },
 
@@ -100,6 +101,11 @@ export default defineComponent({
           this.weatherInfo = data;
           this.errorMessage = '';
           this.updateWindData();
+
+          const currentTime = new Date().getTime() / 1000;
+          const timezone = data.timezone;
+          const localTime = currentTime + timezone;
+          this.currentLocalTime = localTime;
         });
       }
     },
@@ -217,6 +223,7 @@ export default defineComponent({
     :wind-gusts="windGusts"
     :handle-input="handleInput"
     :select-cities-prop="selectCities"
+    :current-time="currentLocalTime"
     @update-weather="updateWeather"
     @update:model-value="updateCity"
     @select-cities="selectCities"

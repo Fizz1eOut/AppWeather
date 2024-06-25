@@ -45,6 +45,13 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .city {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
  .city-list {
     display: flex;
     align-items: center;
