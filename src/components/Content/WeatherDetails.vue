@@ -50,10 +50,14 @@ export default defineComponent({
       type: Function,
       required: true
     },
-    currentTime: {
+    cityTime: {
       type: Number,
       required: true,
     },
+    cities: {
+      type: Array,
+      default: () => []
+    }
   },
 
   emits: ['update-weather', 'update:modelValue', 'select-cities'],
@@ -123,6 +127,7 @@ export default defineComponent({
           :filtered-cities="filteredCities"
           :handle-input="handleInput"
           :select-cities-prop="handleSelectCities"
+          :cities="cities"
           @update-weather="updateWeather"
           @select-cities="handleSelectCities"
         />
@@ -132,7 +137,7 @@ export default defineComponent({
           :wind-data="windData"
           :time-data="timeData"
           :wind-gusts="windGusts"
-          :current-time="currentTime"
+          :current-time="cityTime"
         />
       </div>
     </app-container>

@@ -96,7 +96,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
+  <div class="chart-container">
     <apexchart type="line" :options="chartOptions" :series="series" />
   </div>
 </template>

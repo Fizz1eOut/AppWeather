@@ -70,7 +70,7 @@ export default defineComponent({
         xaxis: {
           type: 'datetime',
           labels: {
-            format: 'HH:mm',
+            format: 'HH',
           },
         },
 

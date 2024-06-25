@@ -22,7 +22,7 @@ export default defineComponent({
     AppDivider,
     IconLocality,
     IconCalendar,
-    CitySuggestions
+    CitySuggestions,
 },
 
   props: {
@@ -50,6 +50,10 @@ export default defineComponent({
       type: Function,
       required: true
     },
+    cities: {
+      type: Array,
+      default: () => []
+    }
   },
 
   emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather'],
@@ -143,19 +147,20 @@ export default defineComponent({
           <city-suggestions
             :filtered-cities="filteredCities"
             :select-city="handleSelectCities"
+            class="city-suggestions"
           />
 
           <!-- <multiselect
-            v-model="selectedCity"
+            v-model="inputValue"
             :options="cities"
             :multiple="false"
-            :searchable="true"
+            searchable
             placeholder="Enter your city"
             label="name"
-            :clear-on-select="true"
-            :close-on-select="true"
+            clear-on-select
+            close-on-select
             :allow-empty="false"
-            @click="getWeather"
+            @change="updateWeather"
           /> -->
         </div>
 
@@ -195,6 +200,9 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .city-suggestions {
+    position: static;
+  }
   .error-message {
     color: red;
   }

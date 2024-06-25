@@ -24,7 +24,7 @@ export default defineComponent({
       windGusts: [],
       cities: [],
       filteredCities: [],
-      currentLocalTime: null,
+      selectedCityTime: null,
     };
   },
 
@@ -85,6 +85,8 @@ export default defineComponent({
         this.weatherInfo = data;
         this.errorMessage = '';
         this.updateWindData();
+
+        this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
       } catch (error) {
         this.errorMessage = 'Failed to retrieve weather data. Please check if you entered the city correctly';
         this.resetWindData()
@@ -102,10 +104,7 @@ export default defineComponent({
           this.errorMessage = '';
           this.updateWindData();
 
-          const currentTime = new Date().getTime() / 1000;
-          const timezone = data.timezone;
-          const localTime = currentTime + timezone;
-          this.currentLocalTime = localTime;
+          this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
         });
       }
     },
@@ -223,7 +222,8 @@ export default defineComponent({
     :wind-gusts="windGusts"
     :handle-input="handleInput"
     :select-cities-prop="selectCities"
-    :current-time="currentLocalTime"
+    :city-time="selectedCityTime"
+    :cities="cities"
     @update-weather="updateWeather"
     @update:model-value="updateCity"
     @select-cities="selectCities"
