@@ -16,7 +16,7 @@ export default defineComponent({
 <style scoped>
   .underlay {
     background: var(--color-transparent-white);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(12px);
     border-radius: 40px;
   }
 </style>

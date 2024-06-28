@@ -1,5 +1,5 @@
 <script>
-import { API_KEY, BASE_URL } from '@/api/script';
+import { API_KEY, BASE_URL, FORECAST_URL } from '@/api/script';
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
@@ -25,6 +25,7 @@ export default defineComponent({
       cities: [],
       filteredCities: [],
       selectedCityTime: null,
+      forecast: [],
     };
   },
 
@@ -87,12 +88,29 @@ export default defineComponent({
         this.updateWindData();
 
         this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
+
+        await this.getForecast(data.coord.lat, data.coord.lon);
       } catch (error) {
         this.errorMessage = 'Failed to retrieve weather data. Please check if you entered the city correctly';
         this.resetWindData()
       }
     },
     
+    async getForecast(lat, lon) {
+      try {
+        const response = await fetch(`${FORECAST_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
+        // console.log(response)
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        // console.log(data)
+        this.forecast = data.list;
+      } catch (error) {
+        console.error('Failed to retrieve forecast:', error);
+      }
+    },
+
     async getGeoLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (position) => {
@@ -105,6 +123,8 @@ export default defineComponent({
           this.updateWindData();
 
           this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
+
+          await this.getForecast(data.coord.lat, data.coord.lon);
         });
       }
     },
@@ -224,6 +244,7 @@ export default defineComponent({
     :select-cities-prop="selectCities"
     :city-time="selectedCityTime"
     :cities="cities"
+    :forecast="forecast"
     @update-weather="updateWeather"
     @update:model-value="updateCity"
     @select-cities="selectCities"

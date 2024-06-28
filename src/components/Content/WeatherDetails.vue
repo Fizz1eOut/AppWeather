@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import AppContainer from '@/components/Base/AppContainer.vue';
 import WeatherSummary from '@/components/Content/WeatherSummary.vue';
 import HighLights from '@/components/Content/HighLights.vue';
+import WeeklyForecast from '@/components/Content/WeeklyForecast.vue'
 
 export default defineComponent({
   name: 'WeatherDetails',
@@ -10,7 +11,8 @@ export default defineComponent({
   components: {
     AppContainer,
     WeatherSummary,
-    HighLights
+    HighLights,
+    WeeklyForecast
   },
 
   props: {
@@ -57,7 +59,11 @@ export default defineComponent({
     cities: {
       type: Array,
       default: () => []
-    }
+    },
+    forecast: { 
+      type: Array,
+      required: true,
+    },
   },
 
   emits: ['update-weather', 'update:modelValue', 'select-cities'],
@@ -140,6 +146,11 @@ export default defineComponent({
           :current-time="cityTime"
         />
       </div>
+
+      <weekly-forecast 
+        v-if="forecast"
+        :forecast="forecast"
+      />
     </app-container>
   </div>
 </template>

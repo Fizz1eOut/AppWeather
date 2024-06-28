@@ -257,7 +257,7 @@ export default defineComponent({
     gap: 10px;
   }
   .weather-summary__row:not(:last-child) {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   .weather-summary__icon-locality {
     width: 30px;
