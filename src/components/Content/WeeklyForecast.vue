@@ -81,6 +81,13 @@ export default defineComponent({
     }
   },
 
+  watch: {
+    forecast() {
+      this.selectedDayData = null;
+      this.selectedDate = null;
+    }
+  },
+
   mounted() {
     // Загрузка иконок при монтировании компонента
     const imageFiles = import.meta.glob('../../assets/img/сlouds/*.png');
