@@ -233,29 +233,27 @@ export default defineComponent({
 <template>
   <weather-details
     v-if="weatherInfo"
+    v-model="city"
     :weather-info="weatherInfo"
-    :model-value="city"
+    :forecast="forecast"
     :error-message="errorMessage"
     :filtered-cities="filteredCities"
     :wind-data="windData"
     :time-data="timeData"
     :wind-gusts="windGusts"
-    :handle-input="handleInput"
-    :select-cities-prop="selectCities"
     :city-time="selectedCityTime"
-    :cities="cities"
-    :forecast="forecast"
-    @update-weather="updateWeather"
-    @update:model-value="updateCity"
+    @update-weather="getWeather"
     @select-cities="selectCities"
+    @handle-input="handleInput"
+    @keydown.enter="updateWeather"
   />
-
+  
   <weather-search 
     v-else
     :model-value="city"
     :error-message="errorMessage"
     :filtered-cities="filteredCities"
-    :handle-input="handleInput"
+    @handle-input="handleInput"
     @update:model-value="updateCity"
     @update-weather="updateWeather"
     @select-cities="selectCities"

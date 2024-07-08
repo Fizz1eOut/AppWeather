@@ -42,21 +42,13 @@ export default defineComponent({
       type: Array,
       default: () => []
     },
-    handleInput: {
-      type: Function,
-      required: true 
-    },
-    selectCitiesProp: {
-      type: Function,
-      required: true
-    },
     cities: {
       type: Array,
       default: () => []
     }
   },
 
-  emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather'],
+  emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather', 'handle-input'],
 
   data() {
     return {
@@ -106,6 +98,7 @@ export default defineComponent({
     handleSelectCities(item) {
       this.$emit('select-cities', item);
     },
+
     updateWeather() {
       this.$emit('update-weather');
     },
@@ -139,15 +132,15 @@ export default defineComponent({
             v-model="inputValue"
             placeholder="Enter your city"
             @keydown.enter="updateWeather"
-            @input="handleInput"
+            @input="$emit('handle-input')"
           />
           <IconSearch class="weather-summary__icon-search" />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
 
           <city-suggestions
             :filtered-cities="filteredCities"
-            :select-city="handleSelectCities"
             class="city-suggestions"
+            @select-city="handleSelectCities"
           />
 
           <!-- <multiselect

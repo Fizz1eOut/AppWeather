@@ -28,13 +28,9 @@ export default defineComponent({
       type: Array,
       default: () => []
     },
-    handleInput: {
-      type: Function,
-      required: true
-    },
   },
 
-  emits: ['update:modelValue', 'select-cities', 'update-weather'],
+  emits: ['update:modelValue', 'select-cities', 'update-weather', 'handle-input'],
 
   computed: {
     inputValue: {
@@ -71,14 +67,14 @@ export default defineComponent({
             v-model="inputValue"
             placeholder="Enter your city"
             @keydown.enter="updateWeather"
-            @input="handleInput"
+            @input="$emit('handle-input')"
           />
 
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
           
           <city-suggestions
             :filtered-cities="filteredCities"
-            :select-city="handleSelectCities"
+            @select-city="handleSelectCities"
           />
         </div>
       </div>

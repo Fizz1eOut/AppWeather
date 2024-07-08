@@ -44,14 +44,6 @@ export default defineComponent({
       type: Array,
       required: true,
     },
-    handleInput: {
-      type: Function,
-      required: true
-    },
-    selectCitiesProp: {
-      type: Function,
-      required: true
-    },
     cityTime: {
       type: Number,
       required: true,
@@ -66,7 +58,7 @@ export default defineComponent({
     },
   },
 
-  emits: ['update-weather', 'update:modelValue', 'select-cities'],
+  emits: ['update-weather', 'update:modelValue', 'select-cities', 'handle-input'],
   
   data() {
     return {
@@ -112,9 +104,15 @@ export default defineComponent({
     updateWeather() {
       this.$emit('update-weather');
     },
+
     handleSelectCities(item) {
       this.$emit('select-cities', item);
     },
+
+    selectCity(city) {
+      this.$emit('update:modelValue', city);
+      this.$emit('update-weather');
+    }
   },
 })
 </script>
@@ -131,11 +129,9 @@ export default defineComponent({
           :weather-info="weatherInfo"
           :error-message="errorMessage"
           :filtered-cities="filteredCities"
-          :handle-input="handleInput"
-          :select-cities-prop="handleSelectCities"
-          :cities="cities"
           @update-weather="updateWeather"
           @select-cities="handleSelectCities"
+          @handle-input="$emit('handle-input')"
         />
         
         <high-lights

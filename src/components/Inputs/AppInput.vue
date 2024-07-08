@@ -28,6 +28,12 @@ export default defineComponent({
       }
     },
   },
+  
+  methods: {
+    handleInput(event) {
+      this.$emit('update:modelValue', event.target.value);
+    }
+  }
 });
 </script>
 
@@ -38,6 +44,7 @@ export default defineComponent({
       type="text" 
       class="input" 
       :placeholder="placeholder"
+      @input="handleInput"
     >
     <label for="#" class="label" />
   </div>

@@ -17,11 +17,15 @@ export default defineComponent({
         type: Array,
         default: () => []
     },
-    selectCity: {
-        type: Function,
-        required: true
-    }
-  }
+  },
+
+  emits: ['select-city'],
+
+  methods: {
+    selectCity(city) {
+      this.$emit('select-city', city);
+    },
+  },
 })
 </script>
 
