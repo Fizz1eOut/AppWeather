@@ -32,18 +32,6 @@ export default defineComponent({
       type: Array,
       default: () => []
     },
-    windData: {
-      type: Array,
-      required: true,
-    },
-    timeData: { 
-      type: Array,
-      required: true,
-    },
-    windGusts: { 
-      type: Array,
-      required: true,
-    },
     cityTime: {
       type: Number,
       required: true,
@@ -136,9 +124,7 @@ export default defineComponent({
         
         <high-lights
           :weather-info="weatherInfo"
-          :wind-data="windData"
-          :time-data="timeData"
-          :wind-gusts="windGusts"
+          :forecast="forecast"
           :current-time="cityTime"
         />
       </div>

@@ -19,9 +19,6 @@ export default defineComponent({
       weatherInfo: null,
       errorMessage: '',
       weatherImages: {},
-      windData: [],
-      timeData: [],
-      windGusts: [],
       cities: [],
       filteredCities: [],
       selectedCityTime: null,
@@ -31,14 +28,12 @@ export default defineComponent({
 
   watch: {
     '$route.query.city'(newCity) {
-      this.resetWindData()
       this.city = newCity || '';
       if (this.city) {
         this.debouncedGetWeather();
       } else {
         this.weatherInfo = null;
         this.errorMessage = '';
-        this.resetWindData()
       }
     }
   },
@@ -70,7 +65,6 @@ export default defineComponent({
       });
     }
 
-    this.startWindDataCollection();
     this.fetchCities();
   },
 
@@ -85,14 +79,12 @@ export default defineComponent({
         const data = await response.json();
         this.weatherInfo = data;
         this.errorMessage = '';
-        this.updateWindData();
 
         this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
 
         await this.getForecast(data.coord.lat, data.coord.lon);
       } catch (error) {
         this.errorMessage = 'Failed to retrieve weather data. Please check if you entered the city correctly';
-        this.resetWindData()
       }
     },
     
@@ -106,6 +98,7 @@ export default defineComponent({
         const data = await response.json();
         // console.log(data)
         this.forecast = data.list;
+
       } catch (error) {
         console.error('Failed to retrieve forecast:', error);
       }
@@ -120,7 +113,6 @@ export default defineComponent({
           const data = await response.json();
           this.weatherInfo = data;
           this.errorMessage = '';
-          this.updateWindData();
 
           this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
 
@@ -185,47 +177,6 @@ export default defineComponent({
     getWeatherIcon(description) {
       return this.weatherImages[description];
     },
-
-    updateWindData() {
-      if (this.weatherInfo) {
-        const currentSpeed = this.weatherInfo.wind.speed;
-        const currentGusts = this.weatherInfo?.wind.gust;
-        const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        this.windData.unshift(currentSpeed);
-        this.timeData.unshift(currentTime);
-
-        if (currentGusts !== undefined) {
-          this.windGusts.unshift(currentGusts);
-        }
-
-        // Проверяем длину массивов и удаляем лишние элементы
-        if (this.windData.length > 4) {
-          this.windData.pop();
-          // console.log(this.windData);
-        }
-        if (this.windGusts.length > 4) {
-          this.windGusts.pop();
-          // console.log(this.windGusts);
-        }
-        if (this.timeData.length > 4) {
-          this.timeData.pop();
-          // console.log(this.timeData);
-        }
-      }
-    },
-
-    startWindDataCollection() {
-      setInterval(async () => {
-        this.updateWindData();
-      }, 6000); // Обновление каждые 6 сек
-    },
-
-    resetWindData() {
-      this.windData = [];
-      this.timeData = [];
-      this.windGusts = [];
-    },
   }
 });
 </script>
@@ -238,9 +189,6 @@ export default defineComponent({
     :forecast="forecast"
     :error-message="errorMessage"
     :filtered-cities="filteredCities"
-    :wind-data="windData"
-    :time-data="timeData"
-    :wind-gusts="windGusts"
     :city-time="selectedCityTime"
     @update-weather="getWeather"
     @select-cities="selectCities"

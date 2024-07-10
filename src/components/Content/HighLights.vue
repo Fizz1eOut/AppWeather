@@ -30,15 +30,7 @@ export default defineComponent({
       type: Object,
       default: null
     },
-    windData: {
-      type: Array,
-      required: true,
-    },
-    timeData: { 
-      type: Array,
-      required: true,
-    },
-    windGusts: { 
+    forecast: { 
       type: Array,
       required: true,
     },
@@ -95,7 +87,7 @@ export default defineComponent({
                 <app-subtitle>Wind</app-subtitle>
               </template>
 
-              <wind-chart :wind-data="windData" :time-data="timeData" :wind-gusts="windGusts" />
+              <wind-chart :forecast="forecast" :current-time="currentTime" />
 
               <template #text>
                 <span>{{ weatherInfo?.wind?.speed }} m/s</span>
