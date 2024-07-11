@@ -36,7 +36,7 @@ export default defineComponent({
       chartOptions: {
         chart: {
           type: 'line',
-          height: 250,
+          height: 200,
           zoom: {
             enabled: false,
           },
@@ -72,60 +72,98 @@ export default defineComponent({
   },
 
   watch: {
+    // Наблюдаем за изменениями в свойстве forecast
     forecast: {
-      handler(newForecast) { // Обработчик изменений в prop forecast
-        this.updateChart(newForecast); // Обновляем график при изменении forecast
+      // Обработчик изменений
+      handler(newForecast) {
+        // Вызываем метод updateChart при изменении forecast
+        this.updateChart(newForecast);
       },
-      immediate: true // Обработчик срабатывает сразу после создания компонента
+      // Запускаем обработчик немедленно при монтировании компонента
+      immediate: true
     }
+  },
+
+  mounted() {
+    // Вызываем метод updateChart при монтировании компонента, передавая текущее значение forecast
+    this.updateChart(this.forecast);
   },
 
   methods: {
     updateChart(forecast) {
-      const startTime = new Date(); // Текущая дата и время
-      startTime.setHours(0, 0, 0, 0); // Устанавливаем начало дня (00:00)
-      const endTime = new Date(startTime); // Копируем начало дня
-      endTime.setDate(endTime.getDate() + 1); // Устанавливаем конец дня (24:00)
+      console.log(forecast)
+      // Вычисляем смещение временной зоны браузера в секундах
+      const browserTimeOffset = new Date().getTimezoneOffset() * 60;
 
-      const filteredForecast = forecast.filter(item => {
-        const forecastTime = new Date(item.dt * 1000); // Конвертируем время прогноза
-        return forecastTime >= startTime && forecastTime < endTime; // Отфильтровываем данные для текущего дня
+      // Вычисляем смещение временной зоны города относительно текущего времени в секундах
+      const cityTimeOffset = this.currentTime - Math.floor(Date.now() / 1000);
+
+      // Вычисляем общее смещение времени для корректировки прогноза
+      const totalOffset = cityTimeOffset + browserTimeOffset;
+      
+      // Корректируем прогноз, добавляя общее смещение ко времени каждого элемента
+      const adjustedForecast = forecast.map(item => {
+        const adjustedTime = new Date((item.dt + totalOffset) * 1000);
+        return {
+          ...item,
+          adjustedTime
+        };
       });
 
+      // Фильтруем откорректированный прогноз для текущей даты
+      const filteredForecast = adjustedForecast.filter(item => {
+        const forecastDate = item.adjustedTime;
+        const currentDate = new Date();
+        return (
+          forecastDate.getDate() === currentDate.getDate() &&
+          forecastDate.getMonth() === currentDate.getMonth() &&
+          forecastDate.getFullYear() === currentDate.getFullYear()
+        );
+      });
+
+      // Формируем данные о скорости ветра для графика
       const windSpeedData = filteredForecast.map(item => ({
-        x: new Date(item.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Время
-        y: item.wind.speed // Скорость ветра
+        x: item.adjustedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        y: item.wind.speed
       }));
 
+      // Формируем данные о порывах ветра для графика
       const windGustsData = filteredForecast.map(item => ({
-        x: new Date(item.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Время
-        y: item.wind.gust || 0 // Порывы ветра (если отсутствует, то 0)
+        x: item.adjustedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        y: item.wind.gust || 0
       }));
 
+      // Обновляем данные серий графика
       this.series = [
         {
-          name: "Wind Speed (m/s)", // Обновляем данные для первой серии
+          name: "Wind Speed",
           data: windSpeedData
         },
         {
-          name: "Wind Gusts (m/s)", // Обновляем данные для второй серии
+          name: "Wind Gusts",
           data: windGustsData
         }
       ];
 
-      this.chartOptions.xaxis.categories = windSpeedData.map(item => item.x); // Обновляем категории оси X
-    }
-  },
+      // Обновляем категории оси X для графика
+      this.chartOptions.xaxis.categories = windSpeedData.map(item => item.x);
 
-  onMounted() {
-    this.updateChart(this.forecast); // Обновляем график при монтировании компонента
+      // Обновляем заголовок графика с текущим временем города
+      const cityCurrentTime = new Date((this.currentTime + browserTimeOffset) * 1000);
+      this.chartOptions.title.text = `City Time: ${cityCurrentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
   }
 });
 </script>
 
 <template>
   <div class="chart-container">
-    <apexchart type="line" :options="chartOptions" :series="series" />
+    <apexchart
+      type="line"
+      :options="chartOptions"
+      :series="series"
+      height="200"
+    />
   </div>
 </template>
 

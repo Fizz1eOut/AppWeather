@@ -173,7 +173,7 @@ export default defineComponent({
     gap: 20px;
   }
 
-  @media (max-width: 1164px) {
+  @media (max-width: 1210px) {
     .weather-content {
       flex-direction: column;
       align-items: center;

@@ -90,6 +90,7 @@ export default defineComponent({
           :options="chartOptions"
           :series="series"
           class="apex-chart"
+          height="350"
         />
       </app-container>
     </app-underlay>
