@@ -81,6 +81,16 @@ export default defineComponent({
       },
       // Запускаем обработчик немедленно при монтировании компонента
       immediate: true
+    },
+    // Наблюдаем за изменениями в свойстве currentTime
+    currentTime: {
+      // Обработчик изменений
+      handler() {
+        // Вызываем метод updateChart при изменении currentTime
+        this.updateChart(this.forecast);
+      },
+      // Запускаем обработчик немедленно при монтировании компонента
+      immediate: true
     }
   },
 
@@ -91,7 +101,7 @@ export default defineComponent({
 
   methods: {
     updateChart(forecast) {
-      console.log(forecast)
+      // console.log(forecast);
       // Вычисляем смещение временной зоны браузера в секундах
       const browserTimeOffset = new Date().getTimezoneOffset() * 60;
 
@@ -146,11 +156,25 @@ export default defineComponent({
       ];
 
       // Обновляем категории оси X для графика
-      this.chartOptions.xaxis.categories = windSpeedData.map(item => item.x);
+      const categories = windSpeedData.map(item => item.x);
 
       // Обновляем заголовок графика с текущим временем города
       const cityCurrentTime = new Date((this.currentTime + browserTimeOffset) * 1000);
-      this.chartOptions.title.text = `City Time: ${cityCurrentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      const title = `City Time: ${cityCurrentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      // Создаем новый объект chartOptions, чтобы Vue.js отслеживал изменения
+      this.chartOptions = {
+        ...this.chartOptions,
+        xaxis: {
+          ...this.chartOptions.xaxis,
+          categories,
+        },
+        title: {
+          ...this.chartOptions.title,
+          text: title
+        }
+      };
+      // console.log(this.chartOptions)
     }
   }
 });
