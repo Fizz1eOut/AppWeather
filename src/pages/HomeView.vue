@@ -1,9 +1,29 @@
 <script>
-import { API_KEY, BASE_URL, FORECAST_URL } from '@/api/script';
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
+import { getWeatherData, getForecastData, getGeoLocationWeather, fetchCitiesData } from '@/api/script';
+
+function debounce(func, wait) {
+  // Переменная для хранения идентификатора таймера
+  let timeout;
+  
+  // Возвращаемая функция, которая будет вызываться вместо оригинальной
+  return function (...args) {
+    // Сохраняем текущий контекст выполнения
+    const context = this;
+    
+    // Очищаем предыдущий таймер, если он существует
+    clearTimeout(timeout);
+    
+    // Устанавливаем новый таймер с задержкой wait миллисекунд
+    timeout = setTimeout(() => {
+      // Вызываем оригинальную функцию func с сохраненным контекстом и аргументами
+      func.apply(context, args);
+    }, wait);
+  };
+}
 
 export default defineComponent({
   name: 'HomeView',
@@ -11,7 +31,7 @@ export default defineComponent({
   components: {
     WeatherDetails,
     WeatherSearch
-},
+  },
 
   data() {
     return {
@@ -72,11 +92,7 @@ export default defineComponent({
     async getWeather() {
       if (!this.city) return;
       try {
-        const response = await fetch(`${BASE_URL}?q=${this.city}&units=metric&appid=${API_KEY}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
+        const data = await getWeatherData(this.city);
         this.weatherInfo = data;
         this.errorMessage = '';
 
@@ -87,18 +103,11 @@ export default defineComponent({
         this.errorMessage = 'Failed to retrieve weather data. Please check if you entered the city correctly';
       }
     },
-    
+
     async getForecast(lat, lon) {
       try {
-        const response = await fetch(`${FORECAST_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
-        // console.log(response)
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        // console.log(data)
+        const data = await getForecastData(lat, lon);
         this.forecast = data.list;
-
       } catch (error) {
         console.error('Failed to retrieve forecast:', error);
       }
@@ -109,31 +118,28 @@ export default defineComponent({
         navigator.geolocation.getCurrentPosition(async (position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          const response = await fetch(`${BASE_URL}?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
-          const data = await response.json();
-          this.weatherInfo = data;
-          this.errorMessage = '';
+          try {
+            const data = await getGeoLocationWeather(latitude, longitude);
+            this.weatherInfo = data;
+            this.errorMessage = '';
 
-          this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
+            this.selectedCityTime = new Date().getTime() / 1000 + data.timezone;
 
-          await this.getForecast(data.coord.lat, data.coord.lon);
+            await this.getForecast(data.coord.lat, data.coord.lon);
+          } catch (error) {
+            this.errorMessage = 'Failed to retrieve weather data.';
+          }
         });
       }
     },
 
     async fetchCities() {
       try {
-        const response = await fetch('https://countriesnow.space/api/v0.1/countries/population/cities');
-        if (!response.ok) {
-          throw new Error('Failed to fetch cities');
-        }
-        const responseData = await response.json();
-        // console.log(responseData)
+        const data = await fetchCitiesData();
          // Преобразуем данные в массив объектов, содержащих имена стран
-        this.cities = responseData.data.map(item => ({
+        this.cities = data.data.map(item => ({
           name: item.city
         }));
-        // console.log(this.cities)
       } catch (error) {
         console.error('Error fetching cities:', error);
       }
@@ -190,7 +196,7 @@ export default defineComponent({
     :error-message="errorMessage"
     :filtered-cities="filteredCities"
     :city-time="selectedCityTime"
-    @update-weather="getWeather"
+    @update-weather="debouncedGetWeather"
     @select-cities="selectCities"
     @handle-input="handleInput"
     @keydown.enter="updateWeather"
@@ -203,7 +209,7 @@ export default defineComponent({
     :filtered-cities="filteredCities"
     @handle-input="handleInput"
     @update:model-value="updateCity"
-    @update-weather="updateWeather"
+    @update-weather="debouncedGetWeather"
     @select-cities="selectCities"
   />
 </template>
