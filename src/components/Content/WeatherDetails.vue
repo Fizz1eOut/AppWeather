@@ -22,15 +22,7 @@ export default defineComponent({
     },
     modelValue: {
       type: String,
-      required: true
-    },
-    errorMessage: {
-      type: String,
-      default: ''
-    },
-    filteredCities: {
-      type: Array,
-      default: () => []
+      default: undefined
     },
     cityTime: {
       type: Number,
@@ -46,7 +38,7 @@ export default defineComponent({
     },
   },
 
-  emits: ['update-weather', 'update:modelValue', 'select-cities', 'handle-input'],
+  emits: ['update-weather', 'update:modelValue'],
   
   data() {
     return {
@@ -93,10 +85,6 @@ export default defineComponent({
       this.$emit('update-weather');
     },
 
-    handleSelectCities(item) {
-      this.$emit('select-cities', item);
-    },
-
     selectCity(city) {
       this.$emit('update:modelValue', city);
       this.$emit('update-weather');
@@ -115,11 +103,8 @@ export default defineComponent({
         <weather-summary
           v-model="inputValue"
           :weather-info="weatherInfo"
-          :error-message="errorMessage"
-          :filtered-cities="filteredCities"
+          :cities="cities"
           @update-weather="updateWeather"
-          @select-cities="handleSelectCities"
-          @handle-input="$emit('handle-input')"
         />
         
         <high-lights
@@ -173,7 +158,7 @@ export default defineComponent({
     gap: 20px;
   }
 
-  @media (max-width: 1210px) {
+  @media (max-width: 1300px) {
     .weather-content {
       flex-direction: column;
       align-items: center;

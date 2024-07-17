@@ -1,46 +1,33 @@
 <script>
 import { defineComponent } from 'vue';
 import AppContainer from '@/components/Base/AppContainer.vue';
-import AppInput from '@/components/Inputs/AppInput.vue';
 import AppUnderlay from '@/components/Base/AppUnderlay.vue';
-import IconSearch from '@/components/Icons/IconSearch.vue';
 import AppDivider from '@/components/Base/AppDivider.vue';
 import IconLocality from '@/components/Icons/IconLocality.vue';
 import IconCalendar from '@/components/Icons/IconCalendar.vue';
-import CitySuggestions from '@/components/Content/CitySuggestions.vue';
-// import Multiselect from '@vueform/multiselect';
-// import '@vueform/multiselect/themes/default.css';
+import Multiselect from '@vueform/multiselect';
+import '@vueform/multiselect/themes/default.css';
 
 export default defineComponent({
   name: 'WeatherSummary',
 
   components: {
     AppContainer,
-    AppInput,
     AppUnderlay,
-    IconSearch,
     AppDivider,
     IconLocality,
     IconCalendar,
-    CitySuggestions,
+    Multiselect
 },
 
   props: {
     modelValue: {
       type: String,
-      default: ''
+      default: undefined
     },
     weatherInfo: {
       type: [Object, String, Number],
       default: null
-    },
-    errorMessage: {
-      type: String,
-      default: ''
-    },
-    filteredCities: {
-      type: Array,
-      default: () => []
     },
     cities: {
       type: Array,
@@ -48,7 +35,7 @@ export default defineComponent({
     }
   },
 
-  emits: ['update:modelValue', 'getWeather', 'select-cities', 'update-weather', 'handle-input'],
+  emits: ['update:modelValue'],
 
   data() {
     return {
@@ -59,7 +46,7 @@ export default defineComponent({
   computed: {
     inputValue: {
       get() {
-        return this.modelValue;
+        return this.modelValue || '';
       },
       set(newValue) {
         this.$emit('update:modelValue', newValue);
@@ -91,18 +78,6 @@ export default defineComponent({
   },
 
   methods: {
-    getWeather() {
-      this.$emit('getWeather');
-    },
-
-    handleSelectCities(item) {
-      this.$emit('select-cities', item);
-    },
-
-    updateWeather() {
-      this.$emit('update-weather');
-    },
-
     formatDate() {
       const today = new Date().toLocaleString('en-EN', { 
         weekday: 'short', 
@@ -127,34 +102,21 @@ export default defineComponent({
   <div class="weather-summary">
     <app-underlay>
       <app-container size="lg">
-        <div class="weather-summary__header">
-          <app-input 
-            v-model="inputValue"
-            placeholder="Enter your city"
-            @keydown.enter="updateWeather"
-            @input="$emit('handle-input')"
-          />
-          <IconSearch class="weather-summary__icon-search" />
-          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-          <city-suggestions
-            :filtered-cities="filteredCities"
-            class="city-suggestions"
-            @select-city="handleSelectCities"
-          />
-
-          <!-- <multiselect
+        <div class="weather-summary__header">      
+          <multiselect
             v-model="inputValue"
             :options="cities"
             :multiple="false"
+            :limit="100"
+            infinite
             searchable
             placeholder="Enter your city"
             label="name"
+            value-prop="name"
             clear-on-select
             close-on-select
             :allow-empty="false"
-            @change="updateWeather"
-          /> -->
+          />
         </div>
 
         <div class="weather-summary__body">
@@ -192,12 +154,20 @@ export default defineComponent({
   </div>
 </template>
 
-<style scoped>
-  .city-suggestions {
-    position: static;
+<style src="@vueform/multiselect/themes/default.css"></style>
+<style>
+  .multiselect,
+  .multiselect .multiselect-search {
+    border-radius: 30px;
   }
-  .error-message {
-    color: red;
+  .multiselect-search {
+    color: var(--color-black);
+    background: var(--color-transparent-white);
+    backdrop-filter: blur(12px);
+  }
+  .weather-summary {
+    max-width: 366px;
+    width: 100%;
   }
   .weather-summary__header {
     position: relative;
@@ -270,9 +240,9 @@ export default defineComponent({
     font-size: 20px;
     color: var(--color-black);
   }
-  @media (max-width: 1164px) {
+  @media (max-width: 1300px) {
     .weather-summary {
-      max-width: 700px;
+      max-width: 600px;
       width: 100%;
     }
   }

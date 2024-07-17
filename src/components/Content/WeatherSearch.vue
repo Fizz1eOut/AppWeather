@@ -18,19 +18,25 @@ export default defineComponent({
   props: {
     modelValue: {
       type: String,
-      required: true
+      default: undefined
     },
     errorMessage: {
       type: String,
       default: ''
     },
-    filteredCities: {
+    cities: {
       type: Array,
-      default: () => []
+      required: true
     },
   },
 
-  emits: ['update:modelValue', 'select-cities', 'update-weather', 'handle-input'],
+  emits: ['update:modelValue'],
+
+  data() {
+    return {
+      city: '',
+    };
+  },
 
   computed: {
     inputValue: {
@@ -41,15 +47,26 @@ export default defineComponent({
         this.$emit('update:modelValue', newValue);
       }
     },
+
+    filteredCities() {
+      const value = this.city.trim().toLowerCase();
+      console.log(value)
+      if (value.length <= 1) {
+        return [];
+      }
+      return this.cities
+        .filter(city => city.name.toLowerCase().startsWith(value))
+        .slice(0, 4);
+    }
   },
 
   methods: {
     updateWeather() {
-      this.$emit('update-weather');
+      this.inputValue = this.city.trim().toLowerCase();
     },
-    handleSelectCities(item) {
-      this.$emit('select-cities', item);
-    },
+    selectCity(city) {
+      this.inputValue = city.name;
+    }
   }
 });
 </script>
@@ -64,17 +81,16 @@ export default defineComponent({
 
         <div class="input-container">
           <app-input
-            v-model="inputValue"
+            v-model="city"
             placeholder="Enter your city"
             @keydown.enter="updateWeather"
-            @input="$emit('handle-input')"
           />
 
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
           
           <city-suggestions
             :filtered-cities="filteredCities"
-            @select-city="handleSelectCities"
+            @select-city="selectCity"
           />
         </div>
       </div>

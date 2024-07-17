@@ -205,7 +205,7 @@ export default defineComponent({
     font-size: 14px;
     color: var(--color-black);
   }
-  @media (max-width: 869px) {
+  @media (max-width: 940px) {
     .high-lights__body {
       flex-wrap: wrap;
       row-gap: 20px;
@@ -213,21 +213,18 @@ export default defineComponent({
       justify-content: center;
     }
     .high-lights__item {
-      max-width: 300px;
+      max-width: 350px;
     }
   }
   @media (max-width: 869px) {
     .high-lights__item {
-      max-width: 260px;
-    }
-  }
-  @media (max-width: 620px) {
-    .high-lights__item {
-      max-width: 100%;
-    }
-    .high-lights__wrapper {
       max-width: 300px;
     }
+  }
+  @media (max-width: 700px) {
+    .high-lights__item {
+      max-width: 100%;
+    } 
   }
   @media (max-width: 440px) {
     .high-lights__row {
