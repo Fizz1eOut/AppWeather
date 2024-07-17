@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
-import { debounce } from '@/api/utils';
+import { debounce, capitalizeFirstLetter } from '@/api/utils';
 import { getWeatherData, getForecastData, getGeoLocationWeather } from '@/api/weather';
 import { fetchCitiesData } from '@/api/cities';
 
@@ -127,7 +127,7 @@ export default defineComponent({
          // Преобразуем данные в массив объектов, содержащих имена стран
          console.log('Fetched cities:', data.data);
         this.cities = data.data.map(item => ({
-          name: item.city.toLowerCase()
+          name: capitalizeFirstLetter(item.city)
         }));
         console.log(this.cities)
       } catch (error) {

@@ -33,3 +33,15 @@ export function debounce(func, wait) {
     }, wait);
   };
 }
+
+// Преобразует строку: первая буква заглавная, остальные — строчные.
+export function capitalizeFirstLetter(string) {
+  if (!string) return '';
+  
+  return string
+    .split(' ') // Разделяем строку на слова
+    .map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() // Преобразуем каждое слово
+    )
+    .join(' '); // Объединяем слова обратно в строку
+}

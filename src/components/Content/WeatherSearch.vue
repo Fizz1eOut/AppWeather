@@ -4,6 +4,7 @@ import AppContainer from '@/components/Base/AppContainer.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import CitySuggestions from '@/components/Content/CitySuggestions.vue';
+import {  capitalizeFirstLetter } from '@/api/utils';
 
 export default defineComponent({
   name: 'WeatherSearch',
@@ -62,7 +63,7 @@ export default defineComponent({
 
   methods: {
     updateWeather() {
-      this.inputValue = this.city.trim().toLowerCase();
+      this.inputValue = capitalizeFirstLetter(this.city);
     },
     selectCity(city) {
       this.inputValue = city.name;
