@@ -1,0 +1,35 @@
+// Функция для обработки ответа от API
+export const handleResponse = async (response) => {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error: ${response.status} ${response.statusText}\n${errorText}`);
+  }
+  return response.json();
+};
+
+// Общая функция для выполнения запросов
+export const fetchData = async (url) => {
+  const response = await fetch(url);
+  return handleResponse(response);
+};
+
+// управления частотой выполнения функции
+export function debounce(func, wait) {
+  // Переменная для хранения идентификатора таймера
+  let timeout;
+  
+  // Возвращаемая функция, которая будет вызываться вместо оригинальной
+  return function (...args) {
+    // Сохраняем текущий контекст выполнения
+    const context = this;
+    
+    // Очищаем предыдущий таймер, если он существует
+    clearTimeout(timeout);
+    
+    // Устанавливаем новый таймер с задержкой wait миллисекунд
+    timeout = setTimeout(() => {
+      // Вызываем оригинальную функцию func с сохраненным контекстом и аргументами
+      func.apply(context, args);
+    }, wait);
+  };
+}

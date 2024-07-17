@@ -2,28 +2,9 @@
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
-// import debounce from 'lodash/debounce';
-import { getWeatherData, getForecastData, getGeoLocationWeather, fetchCitiesData } from '@/api/script';
-
-function debounce(func, wait) {
-  // Переменная для хранения идентификатора таймера
-  let timeout;
-  
-  // Возвращаемая функция, которая будет вызываться вместо оригинальной
-  return function (...args) {
-    // Сохраняем текущий контекст выполнения
-    const context = this;
-    
-    // Очищаем предыдущий таймер, если он существует
-    clearTimeout(timeout);
-    
-    // Устанавливаем новый таймер с задержкой wait миллисекунд
-    timeout = setTimeout(() => {
-      // Вызываем оригинальную функцию func с сохраненным контекстом и аргументами
-      func.apply(context, args);
-    }, wait);
-  };
-}
+import { debounce } from '@/api/utils';
+import { getWeatherData, getForecastData, getGeoLocationWeather } from '@/api/weather';
+import { fetchCitiesData } from '@/api/cities';
 
 export default defineComponent({
   name: 'HomeView',
@@ -35,20 +16,29 @@ export default defineComponent({
 
   data() {
     return {
-      city: '',
       weatherInfo: null,
       errorMessage: '',
       weatherImages: {},
       cities: [],
-      filteredCities: [],
       selectedCityTime: null,
       forecast: [],
     };
   },
 
+  computed: {
+    city: {
+      get() {
+        return this.$route.query.city;
+      },
+      set(newValue) {
+        const query = { ...this.$route.query, city: newValue === null ? undefined : newValue }
+        this.$router.push({ query })
+      }
+    },
+  },
+
   watch: {
-    '$route.query.city'(newCity) {
-      this.city = newCity || '';
+    city() {
       if (this.city) {
         this.debouncedGetWeather();
       } else {
@@ -57,14 +47,12 @@ export default defineComponent({
       }
     }
   },
-  
+
   created() {
     this.debouncedGetWeather = debounce(this.getWeather, 500);
   },
 
   mounted() {
-    this.city = this.$route.query.city || '';
-
     if (this.city) {
       this.debouncedGetWeather();
     } else {
@@ -137,24 +125,13 @@ export default defineComponent({
       try {
         const data = await fetchCitiesData();
          // Преобразуем данные в массив объектов, содержащих имена стран
+         console.log('Fetched cities:', data.data);
         this.cities = data.data.map(item => ({
-          name: item.city
+          name: item.city.toLowerCase()
         }));
+        console.log(this.cities)
       } catch (error) {
         console.error('Error fetching cities:', error);
-      }
-    },
-
-    handleInput() {
-      if (this.city.trim().length >= 1) {
-        const value = this.city.toLowerCase().trim();
-        this.filteredCities = this.cities
-          .filter(city =>
-            city.name.toLowerCase().startsWith(value)
-          )
-          .slice(0, 4);
-      } else {
-        this.filteredCities = [];
       }
     },
 
@@ -162,19 +139,11 @@ export default defineComponent({
       this.city = newCity;
     },
 
-    selectCities(item) {
-      this.city = item.name;
-      this.filteredCities = [];
-      this.updateWeather();
-    },
-
     updateWeather() {
       if (!this.city) {
         this.$router.push({ path: '/', query: {} });
         return;
       }
-
-      this.filteredCities = [];
 
       this.$router.push({ query: { city: this.city } });
       this.debouncedGetWeather();
@@ -193,24 +162,17 @@ export default defineComponent({
     v-model="city"
     :weather-info="weatherInfo"
     :forecast="forecast"
-    :error-message="errorMessage"
-    :filtered-cities="filteredCities"
     :city-time="selectedCityTime"
+    :cities="cities"
     @update-weather="debouncedGetWeather"
-    @select-cities="selectCities"
-    @handle-input="handleInput"
-    @keydown.enter="updateWeather"
   />
   
   <weather-search 
     v-else
     :model-value="city"
     :error-message="errorMessage"
-    :filtered-cities="filteredCities"
-    @handle-input="handleInput"
+    :cities="cities"
     @update:model-value="updateCity"
-    @update-weather="debouncedGetWeather"
-    @select-cities="selectCities"
   />
 </template>
 
