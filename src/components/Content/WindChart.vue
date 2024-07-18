@@ -181,13 +181,16 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="chart-container">
+  <div v-if="series[0].data.length > 0" class="chart-container">
     <apexchart
       type="line"
       :options="chartOptions"
       :series="series"
       height="200"
     />
+  </div>
+  <div v-else>
+    <p>Wind data chart is temporarily unavailable</p>
   </div>
 </template>
 
