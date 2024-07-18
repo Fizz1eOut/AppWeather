@@ -36,6 +36,10 @@ export default defineComponent({
       type: Array,
       required: true,
     },
+    errorMessage: {
+      type: String,
+      default: ''
+    },
   },
 
   emits: ['update-weather', 'update:modelValue'],
@@ -104,6 +108,7 @@ export default defineComponent({
           v-model="inputValue"
           :weather-info="weatherInfo"
           :cities="cities"
+          :error-message="errorMessage"
           @update-weather="updateWeather"
         />
         

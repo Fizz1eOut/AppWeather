@@ -32,7 +32,11 @@ export default defineComponent({
     cities: {
       type: Array,
       default: () => []
-    }
+    },
+    errorMessage: {
+      type: String,
+      default: ''
+    },
   },
 
   emits: ['update:modelValue'],
@@ -117,6 +121,7 @@ export default defineComponent({
             close-on-select
             :allow-empty="false"
           />
+          <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
 
         <div class="weather-summary__body">
@@ -156,6 +161,10 @@ export default defineComponent({
 
 <style src="@vueform/multiselect/themes/default.css"></style>
 <style>
+  .error-message {
+    color: red;
+    margin-top: 8px;
+  }
   .multiselect,
   .multiselect .multiselect-search {
     border-radius: 30px;

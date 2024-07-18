@@ -50,6 +50,7 @@ export default defineComponent({
 
   created() {
     this.debouncedGetWeather = debounce(this.getWeather, 500);
+    console.log(import.meta.env)
   },
 
   mounted() {
@@ -164,6 +165,7 @@ export default defineComponent({
     :forecast="forecast"
     :city-time="selectedCityTime"
     :cities="cities"
+    :error-message="errorMessage"
     @update-weather="debouncedGetWeather"
   />
   
