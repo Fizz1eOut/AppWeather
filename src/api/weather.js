@@ -1,4 +1,6 @@
-import { API_KEY, BASE_URL, FORECAST_URL } from '@/api/env';
+const API_KEY = import.meta.env.VITE_API_KEY;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const FORECAST_URL = import.meta.env.VITE_FORECAST_URL;
 import { fetchData } from '@/api/utils';
 
 // Получение данных о погоде по названию города
