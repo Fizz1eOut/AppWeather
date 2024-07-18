@@ -34,14 +34,16 @@ export default defineComponent({
     <app-underlay>
       <app-container size="md">
         <ul class="city-list">
-          <li
-            v-for="filteredCity in filteredCities"
-            :key="filteredCity.name"
-            class="city-list__city"
-            @click="selectCity(filteredCity)"
-          >
-            {{ filteredCity.name }}
-          </li>
+          <transition-group name="fade">
+            <li
+              v-for="filteredCity in filteredCities"
+              :key="filteredCity.name"
+              class="city-list__city"
+              @click="selectCity(filteredCity)"
+            >
+              {{ filteredCity.name }}
+            </li>
+          </transition-group>
         </ul>
       </app-container>
     </app-underlay>
@@ -49,6 +51,12 @@ export default defineComponent({
 </template>
 
 <style scoped>
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s ease-in-out;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
   .city {
     position: absolute;
     top: 100%;

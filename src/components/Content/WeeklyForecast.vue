@@ -149,12 +149,14 @@ export default defineComponent({
             </app-underlay>
           </div>
         </div>
-        <weather-chart 
-          v-if="selectedDayData" 
-          :day-data="selectedDayData" 
-          :date="selectedDate"
-          class="weather-chart"
-        />
+        <Transition name="bounce">
+          <weather-chart 
+            v-if="selectedDayData" 
+            :day-data="selectedDayData" 
+            :date="selectedDate"
+            class="weather-chart"
+          />
+        </Transition>
       </app-container>
     </app-underlay>
   </div>
@@ -201,6 +203,21 @@ export default defineComponent({
     .forecast__temp--max,
     .forecast__temp--min {
       font-size: 16px;
+    }
+  }
+
+  .bounce-enter-active {
+    animation: bounce-in 0.9s;
+  }
+  .bounce-leave-active {
+    animation: bounce-in 0.6s reverse;
+  }
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
     }
   }
 </style>
