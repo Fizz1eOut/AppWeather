@@ -50,7 +50,6 @@ export default defineComponent({
 
   created() {
     this.debouncedGetWeather = debounce(this.getWeather, 500);
-    console.log(import.meta.env)
   },
 
   mounted() {
@@ -74,7 +73,7 @@ export default defineComponent({
       });
     }
 
-    this.fetchCities();
+    // this.fetchCities();
   },
 
   methods: {
@@ -122,14 +121,16 @@ export default defineComponent({
       }
     },
 
-    async fetchCities() {
+    async fetchCities(cityName) {
       try {
-        const data = await fetchCitiesData();
-         // Преобразуем данные в массив объектов, содержащих имена стран
-         console.log('Fetched cities:', data.data);
-        this.cities = data.data.map(item => ({
-          name: capitalizeFirstLetter(item.city)
-        }));
+        const data = await fetchCitiesData(cityName);
+        this.cities = data.map(item => ({
+          name: capitalizeFirstLetter(item.name)
+        })).filter((value, index, self) =>
+          index === self.findIndex((t) => (
+            t.name === value.name
+          ))
+        );
         console.log(this.cities)
       } catch (error) {
         console.error('Error fetching cities:', error);
@@ -138,6 +139,7 @@ export default defineComponent({
 
     updateCity(newCity) {
       this.city = newCity;
+      this.debouncedGetWeather();
     },
 
     updateWeather() {
@@ -167,14 +169,16 @@ export default defineComponent({
     :cities="cities"
     :error-message="errorMessage"
     @update-weather="debouncedGetWeather"
+    @fetch-cities="fetchCities"
   />
   
-  <weather-search 
+  <weather-search
     v-else
     :model-value="city"
     :error-message="errorMessage"
     :cities="cities"
     @update:model-value="updateCity"
+    @fetch-cities="fetchCities"
   />
 </template>
 

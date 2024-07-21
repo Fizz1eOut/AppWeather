@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
 
-  emits: ['update-weather', 'update:modelValue'],
+  emits: ['update-weather', 'update:modelValue', 'fetch-cities'],
   
   data() {
     return {
@@ -88,11 +88,6 @@ export default defineComponent({
     updateWeather() {
       this.$emit('update-weather');
     },
-
-    selectCity(city) {
-      this.$emit('update:modelValue', city);
-      this.$emit('update-weather');
-    }
   },
 })
 </script>
@@ -110,6 +105,7 @@ export default defineComponent({
           :cities="cities"
           :error-message="errorMessage"
           @update-weather="updateWeather"
+          @fetch-cities="$emit('fetch-cities', $event)"
         />
         
         <high-lights

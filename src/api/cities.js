@@ -1,7 +1,8 @@
 import { fetchData } from '@/api/utils';
 
 // Получение данных о городах
-export const fetchCitiesData = () => {
-  const url = 'https://countriesnow.space/api/v0.1/countries/population/cities';
+export const fetchCitiesData = (cityName) => {
+  const url = `${import.meta.env.VITE_GEOCODING_URL}?q=${cityName}&limit=5&appid=${import.meta.env.VITE_API_KEY}`;
+  console.log(url)
   return fetchData(url);
 };

@@ -4,7 +4,7 @@ import AppContainer from '@/components/Base/AppContainer.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import CitySuggestions from '@/components/Content/CitySuggestions.vue';
-import {  capitalizeFirstLetter } from '@/api/utils';
+import { debounce, capitalizeFirstLetter } from '@/api/utils';
 
 export default defineComponent({
   name: 'WeatherSearch',
@@ -31,11 +31,11 @@ export default defineComponent({
     },
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'fetch-cities'],
 
   data() {
     return {
-      city: '',
+      city: ''
     };
   },
 
@@ -51,14 +51,19 @@ export default defineComponent({
 
     filteredCities() {
       const value = this.city.trim().toLowerCase();
-      console.log(value)
       if (value.length <= 1) {
         return [];
       }
-      return this.cities
-        .filter(city => city.name.toLowerCase().startsWith(value))
-        .slice(0, 4);
+      return this.cities;
     }
+  },
+
+  watch: {
+    city: debounce(function(newCity) {
+      if (newCity.length > 2) {
+        this.$emit('fetch-cities', newCity);
+      }
+    }, 300) // Используем debounce для уменьшения количества запросов
   },
 
   methods: {

@@ -18,7 +18,7 @@ export default defineComponent({
     IconLocality,
     IconCalendar,
     Multiselect
-},
+  },
 
   props: {
     modelValue: {
@@ -39,7 +39,7 @@ export default defineComponent({
     },
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'fetch-cities', 'update-weather'],
 
   data() {
     return {
@@ -79,6 +79,10 @@ export default defineComponent({
         this.weatherImages[fileName] = imageUrl;
       });
     }
+
+    if (this.modelValue) {
+      this.$emit('fetch-cities', this.modelValue);
+    }
   },
 
   methods: {
@@ -97,6 +101,12 @@ export default defineComponent({
         return '';
       }
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    },
+
+    onSearchChange(searchText) {
+      if (searchText.length > 2) {
+        this.$emit('fetch-cities', searchText);
+      }
     },
   }
 });
@@ -120,6 +130,7 @@ export default defineComponent({
             clear-on-select
             close-on-select
             :allow-empty="false"
+            @search-change="onSearchChange"
           />
           <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         </div>
