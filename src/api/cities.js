@@ -1,4 +1,4 @@
-import { fetchData } from '@/api/utils';
+import { fetchData } from '@/untils/utils.js';
 
 // Получение данных о городах
 export const fetchCitiesData = (cityName) => {

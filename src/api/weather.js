@@ -1,7 +1,7 @@
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const FORECAST_URL = import.meta.env.VITE_FORECAST_URL;
-import { fetchData } from '@/api/utils';
+import { fetchData } from '@/untils/utils.js';
 
 // Получение данных о погоде по названию города
 export const getWeatherData = (city) => {

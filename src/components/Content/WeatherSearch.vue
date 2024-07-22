@@ -4,7 +4,7 @@ import AppContainer from '@/components/Base/AppContainer.vue';
 import AppTitle from '@/components/Base/AppTitle.vue';
 import AppInput from '@/components/Inputs/AppInput.vue';
 import CitySuggestions from '@/components/Content/CitySuggestions.vue';
-import { debounce, capitalizeFirstLetter } from '@/api/utils';
+import { debounce, capitalizeFirstLetter } from '@/untils/utils.js';
 
 export default defineComponent({
   name: 'WeatherSearch',

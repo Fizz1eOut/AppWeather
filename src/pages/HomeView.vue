@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
-import { debounce, capitalizeFirstLetter } from '@/api/utils';
+import { debounce, capitalizeFirstLetter } from '@/untils/utils.js';
 import { getWeatherData, getForecastData, getGeoLocationWeather } from '@/api/weather';
 import { fetchCitiesData } from '@/api/cities';
 
