@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import WeatherDetails from '@/components/Content/WeatherDetails.vue';
 import WeatherSearch from '@/components/Content/WeatherSearch.vue';
-import { debounce, capitalizeFirstLetter } from '@/untils/utils.js';
+import { debounce } from '@/untils/utils.js';
 import { getWeatherData, getForecastData, getGeoLocationWeather } from '@/api/weather';
 import { fetchCitiesData } from '@/api/cities';
 
@@ -124,15 +124,8 @@ export default defineComponent({
 
     async fetchCities(cityName) {
       try {
-        const data = await fetchCitiesData(cityName);
-        this.cities = data.map(item => ({
-          name: capitalizeFirstLetter(item.name)
-        })).filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            t.name === value.name
-          ))
-        );
-        console.log(this.cities)
+        this.cities = await fetchCitiesData(cityName);
+        console.log(this.cities);
       } catch (error) {
         console.error('Error fetching cities:', error);
       }

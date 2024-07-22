@@ -13,5 +13,6 @@ module.exports = {
       singleline: {max: 3}
     }],
     'vue/singleline-html-element-content-newline': ['off'],
+    // 'eol-last': ['error', 'always'],
   }
 }
