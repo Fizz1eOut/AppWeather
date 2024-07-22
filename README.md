@@ -17,10 +17,9 @@
 * `vue-router`: Используется для маршрутизации в приложении.
 * `Vite`: Используется для сборки и запуска приложения.
 * `ESLint`: Используется для обеспечения качества кода с помощью линтинга.
-* `Lodash`: Используется функция debounce для ограничения частоты запросов на получение данных о погоде.
 * `Fetch API`: Используется для выполнения HTTP-запросов к внешним API.
 * `Geolocation API`: Используется для получения текущего местоположения пользователя.
-* `Countries Now API`: Используется для получения списка городов для автодополнения предложений.
+* `Geocoding API`: Используется для получения списка городов для подсказок ввода.
 * `ApexCharts`: Используется для отображения графиков в приложении.
 * `@vueform/multiselect`: Компонент для многоуровневого выбора, используемый в приложении.
 
@@ -36,9 +35,10 @@
 ## Настройка API
 Приложение использует OpenWeatherMap API для получения данных о погоде. Вам нужно создать папку api и файл script.js внутри нее с содержимым:
 ```sh
-export const API_KEY = 'YOUR_API_KEY';
-export const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-export const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+VITE_API_KEY=YOUR_API_KEY
+VITE_BASE_URL=https://api.openweathermap.org/data/2.5/weather
+VITE_FORECAST_URL=https://api.openweathermap.org/data/2.5/forecast
+VITE_GEOCODING_URL=https://api.openweathermap.org/geo/1.0/direct
 ```
 Замените YOUR_API_KEY на ваш актуальный API-ключ из OpenWeatherMap.
 
