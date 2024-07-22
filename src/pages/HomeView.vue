@@ -50,6 +50,7 @@ export default defineComponent({
 
   created() {
     this.debouncedGetWeather = debounce(this.getWeather, 500);
+    this.debouncedFetchCities = debounce(this.fetchCities, 300);
   },
 
   mounted() {
@@ -169,7 +170,7 @@ export default defineComponent({
     :cities="cities"
     :error-message="errorMessage"
     @update-weather="debouncedGetWeather"
-    @fetch-cities="fetchCities"
+    @fetch-cities="debouncedFetchCities"
   />
   
   <weather-search
@@ -178,7 +179,7 @@ export default defineComponent({
     :error-message="errorMessage"
     :cities="cities"
     @update:model-value="updateCity"
-    @fetch-cities="fetchCities"
+    @fetch-cities="debouncedFetchCities"
   />
 </template>
 
